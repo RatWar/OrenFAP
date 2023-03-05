@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">ТСД</string>
+    <string name="action_about">О программе…</string>
+    <string name="action_settings">Настройки</string>
+    <string name="content_image">документ</string>
+    <string name="txCopyr">© Anvarov Rais \n 2019 (Orenburg) \n e-mail: ra7@bk.ru</string>
+    <string name="btClose">Закрыть</string>
+    <string name="transportLayoutText">Транспортных:</string>
+    <string name="matrixLayoutText">ШК:</string>
+
+    <!-- Messages Preferences -->
+    <string name="messages_header">Настройки для камеры</string>
+    <string name="reply_title">Камера для сканирования</string>
+    <string name="scan_title">Замена кнопки SCAN</string>
+
+    <!-- Sync Preferences -->
+    <string name="action_load">Загрузить список Номенклатуры</string>
+    <string name="action_save">Сохр.</string>
+    <string name="LoadNomenklature">Загрузка Номенклатуры…</string>
+    <string name="SaveDokuments">Сохранение документов…</string>
+    <string name="DeleteCodes">Удаление штрихкодов…</string>
+    <string name="countNomen">Номенклатур -</string>
+    <string name="add_nomenclature">Add nomenclature</string>
+    <string name="save_dokuments">Save dokuments</string>
+    <string name="camera">Camera</string>
+    <string name="upload_ftp">Upload ftp</string>
+</resources>
