@@ -212,12 +212,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onUploadFTP() {
-        @Suppress("DEPRECATION") val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val fileName = "deleted.json"
-        val fileWrite = File(path, fileName)
-        var t1 = FTPthread()
-        t1.urisArr = fileWrite
-        t1.start()
+        val ftp1 = FTPthread()
+        ftp1.server = "ftp1.oas-orb.ru"
+        ftp1.user = "00000000118334"
+        ftp1.pass = "T08FZVqk"
+        ftp1.inputDir = "nsi/"
+        ftp1.outputDir = "real/"
+        ftp1.start()
     }
 
     // LeftScan = 27  Scan = 301  RightScan = 80
