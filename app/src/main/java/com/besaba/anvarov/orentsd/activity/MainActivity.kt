@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.DocListAdapter
+import com.besaba.anvarov.orentsd.FTPthread
 import com.besaba.anvarov.orentsd.R
 import com.besaba.anvarov.orentsd.databinding.ActivityMainBinding
 import com.besaba.anvarov.orentsd.extensions.isExternalStorageReadable
@@ -24,7 +25,6 @@ import com.besaba.anvarov.orentsd.room.DocumentData
 import com.besaba.anvarov.orentsd.room.NomenData
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.kotlinpermissions.KotlinPermissions
-import net.gotev.uploadservice.ftp.FTPUploadRequest
 import org.json.JSONArray
 import java.io.File
 import java.io.IOException
@@ -215,14 +215,9 @@ class MainActivity : AppCompatActivity() {
         @Suppress("DEPRECATION") val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val fileName = "deleted.json"
         val fileWrite = File(path, fileName)
-        try {
-            FTPUploadRequest(this@MainActivity, "ftp1.oas-orb.ru", 21)
-                .setUsernameAndPassword("00000000118334", "T08FZVqk")
-                .addFileToUpload(fileWrite.toString(), "/real")
-                .startUpload()
-        } catch (exc: Exception) {
-            Toast.makeText(this, exc.message, Toast.LENGTH_LONG).show()
-        }
+        var t1 = FTPthread()
+        t1.urisArr = fileWrite
+        t1.start()
     }
 
     // LeftScan = 27  Scan = 301  RightScan = 80

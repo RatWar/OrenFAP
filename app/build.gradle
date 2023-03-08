@@ -80,6 +80,5 @@ dependencies {
 //    https://github.com/sembozdemir/PermissionsKt
 //    implementation 'com.github.sembozdemir:PermissionsKt:1.0.0'
 
-    //    https://github.com/gotev/android-upload-service/
-    implementation 'net.gotev:uploadservice-ftp:4.7.0'
+    implementation 'commons-net:commons-net:3.8.0'
 }
