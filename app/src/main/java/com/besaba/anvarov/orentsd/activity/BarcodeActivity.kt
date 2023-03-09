@@ -3,15 +3,11 @@ package com.besaba.anvarov.orentsd.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.besaba.anvarov.orentsd.databinding.ActivityBarcodeBinding
 import com.budiyev.android.codescanner.*
-import com.google.zxing.BarcodeFormat
 
 class BarcodeActivity : AppCompatActivity() {
     private lateinit var codeScanner: CodeScanner
@@ -69,19 +65,33 @@ class BarcodeActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    fun vibrate() {
-        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        val canVibrate: Boolean = vibrator.hasVibrator()
-        val milliseconds = 500L
-        if (canVibrate) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(  // API 26
-                    VibrationEffect.createOneShot(milliseconds, VibrationEffect.EFFECT_HEAVY_CLICK
-                    )
-                )
-            } else {
-                vibrator.vibrate(milliseconds)  // This method was deprecated in API level 26
-            }
+    private fun vibrate() {
+//        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+//        val canVibrate: Boolean = vibrator.hasVibrator()
+//        val milliseconds = 500L
+//        if (canVibrate) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                vibrator.vibrate(  // API 26
+//                    VibrationEffect.createOneShot(milliseconds, VibrationEffect.EFFECT_HEAVY_CLICK
+//                    )
+//                )
+//            } else {
+//                vibrator.vibrate(milliseconds)  // This method was deprecated in API level 26
+//            }
+//        }
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+        val duration = 500L
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(duration)
         }
     }
 
