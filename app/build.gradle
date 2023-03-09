@@ -78,4 +78,6 @@ dependencies {
     implementation 'androidx.activity:activity-ktx:1.6.1'
 
     implementation 'commons-net:commons-net:3.8.0'
+
+    implementation 'com.linuxense:javadbf:0.4.0'
 }

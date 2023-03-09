@@ -12,8 +12,8 @@ data class ScanData(
     @ColumnInfo(name = "Barcode") var scanCode: String,
     @ColumnInfo(name = "SGTIN") var sgtin: String,
     @ColumnInfo(name = "Name") var nameNomen: String,
-    @ColumnInfo(name = "EI") var ei: String,
-    @ColumnInfo(name = "MZOO") var mzoo: Int
+    @ColumnInfo(name = "Price") var price: Double,
+    @ColumnInfo(name = "Part") var part: Int
 ){
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0

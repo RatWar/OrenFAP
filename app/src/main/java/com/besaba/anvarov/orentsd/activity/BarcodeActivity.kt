@@ -29,7 +29,8 @@ class BarcodeActivity : AppCompatActivity() {
         val intent = intent
 
         codeScanner.camera = intent.getIntExtra("fCamera", 0)
-        codeScanner.formats = listOf(BarcodeFormat.DATA_MATRIX, BarcodeFormat.CODE_128)
+//        codeScanner.formats = listOf(BarcodeFormat.DATA_MATRIX, BarcodeFormat.CODE_128, BarcodeFormat.EAN_13)
+        codeScanner.formats = CodeScanner.ALL_FORMATS
         codeScanner.autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
         codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
         codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not

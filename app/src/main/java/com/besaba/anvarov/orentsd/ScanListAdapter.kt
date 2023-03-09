@@ -47,7 +47,6 @@ class ScanListAdapter internal constructor(context: Context) : RecyclerView.Adap
         val current = scans[position]
         holder.scanItemBarcode.text = current.barcode
         holder.scanItemName.text = current.nameNomen
-        holder.scanItemEI.text = current.cnt.toString()
 
         holder.scanItemBarcode.setOnClickListener {
             val scan = scans[position]

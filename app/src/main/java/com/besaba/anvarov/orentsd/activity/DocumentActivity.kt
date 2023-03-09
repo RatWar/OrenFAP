@@ -156,6 +156,10 @@ class DocumentActivity : AppCompatActivity() {
             mSGTIN = mBarcode
             handlerTransport()
         }
+        if (mType == "EAN_13"){
+            mSGTIN = mBarcode
+            handlerEAN13()
+        }
     }
 
     private fun onScan(intent: Intent?) {
@@ -167,6 +171,10 @@ class DocumentActivity : AppCompatActivity() {
         if (mType == "EAN-128"){
             mSGTIN = mBarcode
             handlerTransport()
+        }
+        if (mType == "EAN-13"){
+            mSGTIN = mBarcode
+            handlerEAN13()
         }
     }
 
@@ -191,8 +199,8 @@ class DocumentActivity : AppCompatActivity() {
                     mBarcode,
                     mSGTIN,
                     mNomen.name,
-                    mNomen.ei,
-                    mNomen.mzoo
+                    0.0,
+                    0
                 )
             } else {
                 val mNomen0 = mAllViewModel.getNomenByCode(mBarcode.trimStart('0'))
@@ -203,8 +211,8 @@ class DocumentActivity : AppCompatActivity() {
                         mBarcode,
                         mSGTIN,
                         mNomen0.name,
-                        mNomen0.ei,
-                        mNomen0.mzoo
+                        0.0,
+                        0
                     )
                 } else {
                     mCurrentScan = ScanData(
@@ -213,7 +221,7 @@ class DocumentActivity : AppCompatActivity() {
                         mBarcode,
                         mSGTIN,
                         "",
-                        " ",
+                        0.0,
                         0
                     )
                 }
@@ -235,7 +243,27 @@ class DocumentActivity : AppCompatActivity() {
                 "",
                 mSGTIN,
                 "Транспортная",
-                " ",
+                0.0,
+                0
+            )
+            mAllViewModel.insertScan(mCurrentScan)
+            setLayoutCount()
+        } else {
+            soundPlay()
+        }
+    }
+
+    private fun handlerEAN13() {
+        if (checkNotDoubleScan(mSGTIN)) {
+            tableScan.add(mSGTIN)
+            val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
+            mCurrentScan = ScanData(
+                df.format(Date()),
+                mDocumentNumber,
+                "",
+                mSGTIN,
+                "Транспортная",
+                0.0,
                 0
             )
             mAllViewModel.insertScan(mCurrentScan)
