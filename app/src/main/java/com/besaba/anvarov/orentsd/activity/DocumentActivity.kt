@@ -262,7 +262,7 @@ class DocumentActivity : AppCompatActivity() {
                 mDocumentNumber,
                 "",
                 mSGTIN,
-                "Транспортная",
+                "EAN-13",
                 0.0,
                 0
             )
