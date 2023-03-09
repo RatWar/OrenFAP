@@ -25,7 +25,6 @@ class BarcodeActivity : AppCompatActivity() {
         val intent = intent
 
         codeScanner.camera = intent.getIntExtra("fCamera", 0)
-//        codeScanner.formats = listOf(BarcodeFormat.DATA_MATRIX, BarcodeFormat.CODE_128, BarcodeFormat.EAN_13)
         codeScanner.formats = CodeScanner.ALL_FORMATS
         codeScanner.autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
         codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
@@ -66,19 +65,6 @@ class BarcodeActivity : AppCompatActivity() {
     }
 
     private fun vibrate() {
-//        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-//        val canVibrate: Boolean = vibrator.hasVibrator()
-//        val milliseconds = 500L
-//        if (canVibrate) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                vibrator.vibrate(  // API 26
-//                    VibrationEffect.createOneShot(milliseconds, VibrationEffect.EFFECT_HEAVY_CLICK
-//                    )
-//                )
-//            } else {
-//                vibrator.vibrate(milliseconds)  // This method was deprecated in API level 26
-//            }
-//        }
         val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
             vibratorManager.defaultVibrator
@@ -88,7 +74,7 @@ class BarcodeActivity : AppCompatActivity() {
         }
         val duration = 500L
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.EFFECT_HEAVY_CLICK))
         } else {
             @Suppress("DEPRECATION")
             vibrator.vibrate(duration)
