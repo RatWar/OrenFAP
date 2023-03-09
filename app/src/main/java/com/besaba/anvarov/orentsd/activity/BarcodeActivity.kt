@@ -68,7 +68,7 @@ class BarcodeActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    private fun vibrate() {
+    fun vibrate() {
         val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val canVibrate: Boolean = vibrator.hasVibrator()
         val milliseconds = 500L

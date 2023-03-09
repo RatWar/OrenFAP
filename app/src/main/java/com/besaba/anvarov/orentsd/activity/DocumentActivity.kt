@@ -80,11 +80,11 @@ class DocumentActivity : AppCompatActivity() {
 
         val intent = intent
         mDocumentNumber = intent.getIntExtra("documentNumber", 0)
-        mAllViewModel = ViewModelProvider1(this).get(AllViewModel::class.java)
+        mAllViewModel = ViewModelProvider1(this)[AllViewModel::class.java]
         mAllViewModel.setNumDoc(mDocumentNumber)
-        mAllViewModel.mAllScans.observe(this, { scans ->
+        mAllViewModel.mAllScans.observe(this) { scans ->
             scans?.let { scanAdapter.setScans(it) }
-        })
+        }
         tableScan.clear()
         tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
         setLayoutCount()

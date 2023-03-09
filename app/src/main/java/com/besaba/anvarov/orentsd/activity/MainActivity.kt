@@ -66,40 +66,28 @@ class MainActivity : AppCompatActivity() {
         docListAdapter.docAdapter(onDocClickListener)
 
         // беру новую или сущ. ViewModel
-        mAllViewModel =  ViewModelProvider(this).get(AllViewModel::class.java)
+        mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
 
         // Add an observer on the LiveData returned by getAlphabetizedWords.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        mAllViewModel.mAllDocs.observe(this, { docs ->
+        mAllViewModel.mAllDocs.observe(this) { docs ->
             // Update the cached copy of the words in the adapter.
             docs?.let { docListAdapter.setDocs(it) }
-        })
+        }
 
         KotlinPermissions.with(this) // where this is an FragmentActivity instance
             .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .onAccepted { permissions ->
+            .onAccepted {
                 //List of accepted permissions
             }
-            .onDenied { permissions ->
+            .onDenied {
                 //List of denied permissions
             }
-            .onForeverDenied { permissions ->
+            .onForeverDenied {
                 //List of forever denied permissions
             }
             .ask()
-//        askPermissions( Manifest.permission.CAMERA,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE,
-//                        Manifest.permission.WRITE_EXTERNAL_STORAGE){
-//            onGranted {
-//            }
-//            onDenied {
-//            }
-//            onShowRationale{
-//            }
-//            onNeverAskAgain{
-//            }
-//        }
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener { onDocument() }
@@ -113,6 +101,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         fCamera = prefs.getString("reply", "0")
+        if (fCamera == "reply") {
+            fCamera = "0"
+        }
         if (fCamera!!.toInt() == 2) {
             binding.fab.hide()
         }
@@ -213,11 +204,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun onUploadFTP() {
         val ftp1 = FTPthread()
-        ftp1.server = "ftp1.oas-orb.ru"
-        ftp1.user = "00000000118334"
-        ftp1.pass = "T08FZVqk"
-        ftp1.inputDir = "nsi/"
-        ftp1.outputDir = "real/"
+        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        ftp1.server = prefs.getString("et_preference_server", "ftp1.oas-orb.ru").toString()
+        ftp1.user = prefs.getString("et_preference_login", "00000000").toString()
+        ftp1.pass = prefs.getString("et_preference_password", "").toString()
+        ftp1.inputDir = prefs.getString("et_preference_input", "nsi/").toString()
+        ftp1.outputDir = prefs.getString("et_preference_output", "real/").toString()
         ftp1.start()
     }
 
