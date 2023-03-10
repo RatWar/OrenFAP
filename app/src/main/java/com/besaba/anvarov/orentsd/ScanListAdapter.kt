@@ -1,5 +1,6 @@
 package com.besaba.anvarov.orentsd
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +32,7 @@ class ScanListAdapter internal constructor(context: Context) : RecyclerView.Adap
         val scanItemEI: TextView = itemView.findViewById(R.id.cntBarcode)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     internal fun setScans(scanData: List<CountData>) {
         this.scans = scanData
         notifyDataSetChanged()
