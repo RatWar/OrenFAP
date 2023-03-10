@@ -5,7 +5,7 @@ import com.linuxense.javadbf.DBFReader
 import java.io.FileInputStream
 import java.io.IOException
 
-object JavaDBFReaderTest {
+object DBFReaderTest {
     @JvmStatic
     fun main(args: Array<String>) {
         var reader: DBFReader? = null
