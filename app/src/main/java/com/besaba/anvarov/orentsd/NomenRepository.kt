@@ -17,12 +17,17 @@ class NomenRepository (private val nomenDataDao: NomenDataDao) {
     }
 
     @WorkerThread
-    suspend fun delNomen() {
-        return nomenDataDao.delNomen()
+    suspend fun countNomen(): Int {
+        return nomenDataDao.countNomen()
     }
 
     @WorkerThread
-    suspend fun countNomen(): Int {
-        return nomenDataDao.countNomen()
+    suspend fun countAvailable(barcode: String): Int {
+        return nomenDataDao.countAvailable(barcode)
+    }
+
+    @WorkerThread
+    suspend fun updateAvailable(barcode: String, available: Int) {
+        return nomenDataDao.updateAvailable(barcode, available)
     }
 }

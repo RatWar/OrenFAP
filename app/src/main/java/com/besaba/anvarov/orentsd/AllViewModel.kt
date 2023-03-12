@@ -63,29 +63,10 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mAllScans = mScanRepository.getScans(numDoc)
     }
 
-    fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {
-        mNomenRepository.insert(nomenData)
-    }
-
-    fun getNomenByCode(barcode: String): NomenData? {
-        var res: NomenData?
-        runBlocking {res = mNomenRepository.getNomenByCode(barcode) }
-        return res
-    }
 
     fun getAll(): List<ScanData>? {
         var res: List<ScanData>?
         runBlocking { res = mScanRepository.getAll() }
-        return res
-    }
-
-    fun delNomen() {
-        runBlocking { mNomenRepository.delNomen() }
-    }
-
-    fun countNomen(): Int {
-        var res: Int
-        runBlocking { res = mNomenRepository.countNomen() }
         return res
     }
 
@@ -99,6 +80,32 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         var res: Int?
         runBlocking { res = mScanRepository.getDuplicate(numDoc, sgtin) }
         return res
+    }
+
+    fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {
+        mNomenRepository.insert(nomenData)
+    }
+
+    fun getNomenByCode(barcode: String): NomenData? {
+        var res: NomenData?
+        runBlocking {res = mNomenRepository.getNomenByCode(barcode) }
+        return res
+    }
+
+    fun countNomen(): Int {
+        var res: Int
+        runBlocking { res = mNomenRepository.countNomen() }
+        return res
+    }
+
+    fun countAvailable(barcode: String): Int {
+        var res: Int
+        runBlocking { res = mNomenRepository.countAvailable(barcode) }
+        return res
+    }
+
+    fun updateAvailable(barcode: String, available: Int) = viewModelScope.launch(Dispatchers.IO) {
+        mNomenRepository.updateAvailable(barcode, available)
     }
 
 }
