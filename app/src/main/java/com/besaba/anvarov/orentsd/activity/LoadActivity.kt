@@ -122,7 +122,13 @@ class LoadActivity : AppCompatActivity() {
 //                println("Ok")
 //            }
             } catch (ex: IOException) {
+                msg = h!!.obtainMessage(
+                    1,
+                    "Ошибка при загрузке"
+                )
+                h!!.sendMessage(msg)
                 ex.printStackTrace()
+                return@Thread
             }
             try {
                 if (ftpClient.isConnected) {
@@ -130,7 +136,13 @@ class LoadActivity : AppCompatActivity() {
                     ftpClient.disconnect()
                 }
             } catch (ex: IOException) {
+                msg = h!!.obtainMessage(
+                    1,
+                    "Ошибка при закрытии соединения"
+                )
+                h!!.sendMessage(msg)
                 ex.printStackTrace()
+                return@Thread
             }
 // загружаю приход в остатки
             val filesArray: Array<File> = path.listFiles { _, filename ->
@@ -165,9 +177,21 @@ class LoadActivity : AppCompatActivity() {
                     }
                     fileIn.delete()
                 } catch (e: DBFException) {
+                    msg = h!!.obtainMessage(
+                        1,
+                        "Ошибка при работе с dbf"
+                    )
+                    h!!.sendMessage(msg)
                     e.printStackTrace()
+                    return@Thread
                 } catch (e: IOException) {
+                    msg = h!!.obtainMessage(
+                        1,
+                        "Ошибка при записи остатков"
+                    )
+                    h!!.sendMessage(msg)
                     e.printStackTrace()
+                    return@Thread
                 } finally {
                     try {
                         fis.close()
