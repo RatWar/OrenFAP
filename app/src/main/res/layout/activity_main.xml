@@ -20,14 +20,6 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
-                android:id="@+id/countNomenTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="40dp"
-                android:paddingEnd="40dp"
-                android:text="@string/countNomen" />
-
-            <TextView
                 android:id="@+id/countNomen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

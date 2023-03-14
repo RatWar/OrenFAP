@@ -89,8 +89,8 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { onDocument() }
         val ftp = findViewById<FloatingActionButton>(R.id.ftp)
         ftp.setOnClickListener { onUploadFTP() }
-//        val count = mAllViewModel.countNomen().toString()
-//        binding.countNomen.text = count
+        val count = mAllViewModel.countNomen().toString()
+        binding.countNomen.text = "номенклатур в остатках - $count"
         @SuppressLint("HandlerLeak") val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
                 val bundle = msg.data
@@ -121,10 +121,6 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_load -> {
-                onLoad()
-                true
-            }
             R.id.action_settings -> {
                 onSettings()
                 true
@@ -145,57 +141,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
-    private fun onLoad() {
-//        val json: String?
-//        lateinit var mCurrentNomen: NomenData
-//
-//        if (isExternalStorageReadable()) {
-//            try {
-//                mAllViewModel.delNomen()
-//                if (mAllViewModel.countNomen() == 0) {
-//                    @Suppress("DEPRECATION") val path = Environment.getExternalStoragePublicDirectory(
-//                        Environment.DIRECTORY_DOWNLOADS
-//                    )
-//                    val fileNomen = "Nomenklatura.json"
-//                    val fileRead = File(path, fileNomen)
-//                    val inputStream: InputStream = fileRead.inputStream()
-//                    json = inputStream.bufferedReader().use { it.readText() }
-//                    val jsonArray = JSONArray(json)
-//                    for (i in 0 until jsonArray.length()) {
-//                        val jsonobj = jsonArray.getJSONObject(i)
-//                        mCurrentNomen = NomenData(
-//                            jsonobj.getString("Barcode"),
-//                            jsonobj.getString("Name"),
-//                            jsonobj.getString("EI"),
-//                            jsonobj.getInt("MZOO")
-//                        )
-//                        mAllViewModel.insertNomen(mCurrentNomen)
-//                    }
-//                    Toast.makeText(
-//                        applicationContext,
-//                        "Номенклатура загружена в справочник!",
-//                        Toast.LENGTH_LONG
-//                    )
-//                        .show()
-//                } else {
-//                    Toast.makeText(
-//                        applicationContext,
-//                        "Ошибка удаления файла списка номенклатур",
-//                        Toast.LENGTH_LONG
-//                    )
-//                        .show()
-//                }
-//            } catch (e: IOException) {
-//                Toast.makeText(
-//                    applicationContext,
-//                    "Ошибка чтения файла списка номенклатур",
-//                    Toast.LENGTH_LONG
-//                )
-//                    .show()
-//            }
-//        }
-    }
-
     private fun onDocument() {
         val intent = Intent(this@MainActivity, DocumentActivity::class.java)
         val numDoc = mAllViewModel.getNumberDocument()
@@ -206,13 +151,6 @@ class MainActivity : AppCompatActivity() {
     private fun onUploadFTP() {
         val intent = Intent(this@MainActivity, LoadActivity::class.java)
         startActivity(intent)
-//        val ftp1 = FTPthread()
-//        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-//        ftp1.server = prefs.getString("et_preference_server", "ftp1.oas-orb.ru").toString()
-//        ftp1.user = prefs.getString("et_preference_login", "00000000").toString()
-//        ftp1.pass = prefs.getString("et_preference_password", "").toString()
-//        ftp1.inputDir = prefs.getString("et_preference_input", "nsi/").toString()
-//        ftp1.outputDir = prefs.getString("et_preference_output", "real/").toString()
     }
 
 

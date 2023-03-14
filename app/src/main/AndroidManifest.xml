@@ -50,6 +50,7 @@
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.BarcodeActivity" />
+        <activity android:name=".activity.LoadActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"

@@ -25,7 +25,7 @@
     <string name="LoadNomenklature">Загрузка Номенклатуры…</string>
     <string name="SaveDokuments">Сохранение документов…</string>
     <string name="DeleteCodes">Удаление штрихкодов…</string>
-    <string name="countNomen">Номенклатур -</string>
+    <string name="countNomen">Остатки номенклатур -</string>
     <string name="add_nomenclature">Add nomenclature</string>
     <string name="save_dokuments">Save dokuments</string>
     <string name="camera">Camera</string>
