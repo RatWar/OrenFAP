@@ -30,4 +30,5 @@
     <string name="save_dokuments">Save dokuments</string>
     <string name="camera">Camera</string>
     <string name="upload_ftp">Upload ftp</string>
+    <string name="txtLoad">Загрузить...</string>
 </resources>

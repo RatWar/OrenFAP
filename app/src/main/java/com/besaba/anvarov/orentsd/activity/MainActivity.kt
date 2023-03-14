@@ -204,23 +204,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onUploadFTP() {
-//        val dbf1 = DBFthread()
-//        dbf1.start()
-        val ftp1 = FTPthread()
-        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val intent = Intent(this@MainActivity, LoadActivity::class.java)
+        startActivity(intent)
+//        val ftp1 = FTPthread()
+//        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 //        ftp1.server = prefs.getString("et_preference_server", "ftp1.oas-orb.ru").toString()
 //        ftp1.user = prefs.getString("et_preference_login", "00000000").toString()
 //        ftp1.pass = prefs.getString("et_preference_password", "").toString()
 //        ftp1.inputDir = prefs.getString("et_preference_input", "nsi/").toString()
 //        ftp1.outputDir = prefs.getString("et_preference_output", "real/").toString()
-//        runBlocking{
-            ftp1.server = prefs.getString("et_preference_server", "ftp1.oas-orb.ru").toString()
-            ftp1.user = prefs.getString("et_preference_login", "00000000").toString()
-            ftp1.pass = prefs.getString("et_preference_password", "").toString()
-            ftp1.inputDir = prefs.getString("et_preference_input", "nsi/").toString()
-            ftp1.outputDir = prefs.getString("et_preference_output", "real/").toString()
-            ftp1.start()
-//        }
     }
 
 
