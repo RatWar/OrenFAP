@@ -108,5 +108,9 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mNomenRepository.updateAvailable(barcode, available)
     }
 
+    fun delNomen() {
+        runBlocking { mNomenRepository.delNomen() }
+    }
+
 }
 

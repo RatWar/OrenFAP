@@ -30,4 +30,9 @@ class NomenRepository (private val nomenDataDao: NomenDataDao) {
     suspend fun updateAvailable(barcode: String, available: Int) {
         return nomenDataDao.updateAvailable(barcode, available)
     }
+
+    @WorkerThread
+    suspend fun delNomen() {
+        return nomenDataDao.delNomen()
+    }
 }

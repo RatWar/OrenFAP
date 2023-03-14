@@ -22,6 +22,7 @@ import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
 import org.apache.commons.net.ftp.FTPReply
 import java.io.*
+import java.security.KeyStore.TrustedCertificateEntry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors
@@ -65,6 +66,7 @@ class LoadActivity : AppCompatActivity() {
             val inputDir = prefs.getString("et_preference_input", "nsi/").toString()
             val outputDir = prefs.getString("et_preference_output", "real/").toString()
             var msg: Message?
+            var isPrih: Boolean = false
             try {
                 ftpClient.connect(server, FTP.DEFAULT_PORT)
                 ftpClient.login(user, pass)
@@ -95,10 +97,12 @@ class LoadActivity : AppCompatActivity() {
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
                 ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE)
 // получаю файлы "dbf" и переименовываю их в ".tmp"
+
                 for (i in 0 until ftpFiles.size) {
                     if (ftpFiles[i].substring(ftpFiles[i].length - 3) != "dbf") {
                         break
-                    }
+                    } else
+                        isPrih = true
                     val file = File(path, ftpFiles[i])
                     if (!file.exists()) {
                         file.createNewFile()
@@ -109,6 +113,9 @@ class LoadActivity : AppCompatActivity() {
                         ftpClient.rename(inputDir + ftpFiles[i], inputDir + ftpFiles[i] + ".tmp")
                     }
                     fos.close()
+                }
+                if (isPrih) {
+                    mAllViewModel.delNomen()
                 }
 // выгружаю расход в файлы
 //

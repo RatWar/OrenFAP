@@ -19,4 +19,7 @@ interface NomenDataDao {
 
     @Query("UPDATE NomenData set available = :available where Barcode = :barcode")
     suspend fun updateAvailable(barcode: String, available: Int)
+
+    @Query("DELETE from NomenData")
+    suspend fun delNomen()
 }
