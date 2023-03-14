@@ -91,11 +91,6 @@ class MainActivity : AppCompatActivity() {
         ftp.setOnClickListener { onUploadFTP() }
         val count = mAllViewModel.countNomen().toString()
         binding.countNomen.text = "номенклатур в остатках - $count"
-        @SuppressLint("HandlerLeak") val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message) {
-                val bundle = msg.data
-            }
-        }
     }
 
     override fun onResume() {

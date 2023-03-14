@@ -11,7 +11,7 @@ interface NomenDataDao {
     @Query("SELECT * from NomenData where Barcode = :barcode")
     suspend fun getNomenByCode(barcode: String): NomenData?
 
-    @Query("SELECT count(*) from NomenData where Available > 0")
+    @Query("SELECT count(*) from NomenData")
     suspend fun countNomen(): Int
 
     @Query("SELECT available from NomenData where Barcode = :barcode")

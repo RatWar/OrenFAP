@@ -22,7 +22,6 @@ import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
 import org.apache.commons.net.ftp.FTPReply
 import java.io.*
-import java.security.KeyStore.TrustedCertificateEntry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors
@@ -115,6 +114,7 @@ class LoadActivity : AppCompatActivity() {
                     fos.close()
                 }
                 if (isPrih) {
+                    mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
                     mAllViewModel.delNomen()
                 }
 // выгружаю расход в файлы
@@ -155,7 +155,6 @@ class LoadActivity : AppCompatActivity() {
             val filesArray: Array<File> = path.listFiles { _, filename ->
                 filename.lowercase(Locale.getDefault()).endsWith(".dbf")
             } as Array<File>
-            mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
             for (fileIn in filesArray) {
                 val reader: DBFReader?
                 val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
