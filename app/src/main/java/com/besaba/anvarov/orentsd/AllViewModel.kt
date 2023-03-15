@@ -86,6 +86,10 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mNomenRepository.insert(nomenData)
     }
 
+    fun insertNomenBlocking(nomenData: NomenData) {
+        runBlocking { mNomenRepository.insert(nomenData) }
+    }
+
     fun getNomenByCode(barcode: String): NomenData? {
         var res: NomenData?
         runBlocking {res = mNomenRepository.getNomenByCode(barcode) }

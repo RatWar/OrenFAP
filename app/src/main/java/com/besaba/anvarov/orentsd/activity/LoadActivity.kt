@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Message
 import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -38,15 +39,24 @@ class LoadActivity : AppCompatActivity() {
         setContentView(R.layout.activity_load)
         val tvInfo = findViewById<View>(R.id.tvStatus) as TextView
         val btLoad = findViewById<View>(R.id.btnLoad) as Button
+        val pbDownload = findViewById<View>(R.id.pbDownload) as ProgressBar
         btLoad.setOnClickListener { onLoad() }
         h = object : Handler() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
                     0 -> {
-                        tvInfo.text = msg.obj.toString()
+                        btLoad.text = msg.obj.toString()
                     }
                     1 -> {
                         tvInfo.text = msg.obj.toString()
+                    }
+                    2 -> {
+                        pbDownload.max = msg.arg1
+                        pbDownload.progress = 0
+                        pbDownload.visibility = View.VISIBLE
+                    }
+                    3 -> {
+                        pbDownload.progress = msg.arg1
                     }
                 }
             }
@@ -65,7 +75,6 @@ class LoadActivity : AppCompatActivity() {
             val inputDir = prefs.getString("et_preference_input", "nsi/").toString()
             val outputDir = prefs.getString("et_preference_output", "real/").toString()
             var msg: Message?
-            var isPrih: Boolean = false
             try {
                 ftpClient.connect(server, FTP.DEFAULT_PORT)
                 ftpClient.login(user, pass)
@@ -96,12 +105,15 @@ class LoadActivity : AppCompatActivity() {
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
                 ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE)
 // получаю файлы "dbf" и переименовываю их в ".tmp"
-
+                msg = h!!.obtainMessage(
+                    1,
+                    "Получаю файлы остатков"
+                )
+                h!!.sendMessage(msg)
                 for (i in 0 until ftpFiles.size) {
-                    if (ftpFiles[i].substring(ftpFiles[i].length - 3) != "dbf") {
-                        break
-                    } else
-                        isPrih = true
+                    if (ftpFiles[i].substring(ftpFiles[i].length - 3) != "DBF") {
+                        continue
+                    }
                     val file = File(path, ftpFiles[i])
                     if (!file.exists()) {
                         file.createNewFile()
@@ -112,10 +124,6 @@ class LoadActivity : AppCompatActivity() {
                         ftpClient.rename(inputDir + ftpFiles[i], inputDir + ftpFiles[i] + ".tmp")
                     }
                     fos.close()
-                }
-                if (isPrih) {
-                    mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
-                    mAllViewModel.delNomen()
                 }
 // выгружаю расход в файлы
 //
@@ -155,6 +163,15 @@ class LoadActivity : AppCompatActivity() {
             val filesArray: Array<File> = path.listFiles { _, filename ->
                 filename.lowercase(Locale.getDefault()).endsWith(".dbf")
             } as Array<File>
+            if (filesArray.isNotEmpty()) {
+                mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
+                mAllViewModel.delNomen()
+                msg = h!!.obtainMessage(
+                    1,
+                    "Загружаю остатки в базу"
+                )
+                h!!.sendMessage(msg)
+            }
             for (fileIn in filesArray) {
                 val reader: DBFReader?
                 val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
@@ -175,13 +192,13 @@ class LoadActivity : AppCompatActivity() {
                             fileIn.toString(),
                             rowValues[0].toString(),
                             rowValues[1].toString(),
-                            rowValues[2].toString().toDouble(),
+                            (rowValues[2] as Double).toDouble(),
                             (rowValues[3] as Double).toInt(),
                             available
                         )
-                        mAllViewModel.insertNomen(mCurrentNomen)
+                        mAllViewModel.insertNomenBlocking(mCurrentNomen)
                     }
-                    fileIn.delete()
+//                    fileIn.delete()
                 } catch (e: DBFException) {
                     msg = h!!.obtainMessage(
                         1,
@@ -208,6 +225,11 @@ class LoadActivity : AppCompatActivity() {
             msg = h!!.obtainMessage(
                 0,
                 "Загружено!"
+            )
+            h!!.sendMessage(msg)
+            msg = h!!.obtainMessage(
+                1,
+                ""
             )
             h!!.sendMessage(msg)
         }

@@ -1,17 +1,12 @@
 package com.besaba.anvarov.orentsd.activity
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.content.*
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -19,7 +14,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.besaba.anvarov.orentsd.*
+import com.besaba.anvarov.orentsd.AllViewModel
+import com.besaba.anvarov.orentsd.DocListAdapter
+import com.besaba.anvarov.orentsd.R
 import com.besaba.anvarov.orentsd.databinding.ActivityMainBinding
 import com.besaba.anvarov.orentsd.room.DocumentData
 import com.google.android.material.floatingactionbutton.FloatingActionButton
