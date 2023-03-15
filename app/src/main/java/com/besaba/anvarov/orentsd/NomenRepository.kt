@@ -22,7 +22,7 @@ class NomenRepository (private val nomenDataDao: NomenDataDao) {
     }
 
     @WorkerThread
-    suspend fun countAvailable(barcode: String): Int {
+    suspend fun countAvailable(barcode: String): Int? {
         return nomenDataDao.countAvailable(barcode)
     }
 

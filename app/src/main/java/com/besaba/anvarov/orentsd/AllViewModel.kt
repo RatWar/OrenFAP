@@ -102,8 +102,8 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
-    fun countAvailable(barcode: String): Int {
-        var res: Int
+    fun countAvailable(barcode: String): Int? {
+        var res: Int?
         runBlocking { res = mNomenRepository.countAvailable(barcode) }
         return res
     }

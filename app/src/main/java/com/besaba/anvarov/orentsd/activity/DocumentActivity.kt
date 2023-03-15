@@ -254,7 +254,7 @@ class DocumentActivity : AppCompatActivity() {
     }
 
     private fun handlerEAN13() {
-        if (checkNotDoubleScan(mSGTIN)) {
+        if (checkInNomen(mSGTIN) == 0) {
             tableScan.add(mSGTIN)
             val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
             mCurrentScan = ScanData(
@@ -334,6 +334,14 @@ class DocumentActivity : AppCompatActivity() {
     // проверка, что скан не дубль
     private fun checkNotDoubleScan(scan: String): Boolean{
         return mAllViewModel.getDuplicate(mDocumentNumber, scan) != 1
+    }
+
+    // проверка скана в остатках
+    private fun checkInNomen(scan: String): Int{
+        val res = mAllViewModel.countAvailable(scan.padEnd(31))
+        return if ((res == null) || (res == 0)) {
+            0
+        } else res
     }
 
 }

@@ -48,7 +48,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     //     https://github.com/infinum/android_dbinspector
-//    debugImplementation 'im.dino:dbinspector:3.4.1@aar'
+//    debugImplementation("com.infinum.dbinspector:dbinspector:5.4.9")
+//    releaseImplementation("com.infinum.dbinspector:dbinspector-no-op:5.4.9")
 
 // Room components
     implementation "androidx.room:room-runtime:2.5.0"

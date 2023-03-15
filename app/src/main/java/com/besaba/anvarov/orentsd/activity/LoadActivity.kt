@@ -58,6 +58,10 @@ class LoadActivity : AppCompatActivity() {
                     3 -> {
                         pbDownload.progress = msg.arg1
                     }
+                    4 -> {
+                        btLoad.text = msg.obj.toString()
+                        btLoad.isEnabled = false
+                    }
                 }
             }
         }
@@ -187,10 +191,15 @@ class LoadActivity : AppCompatActivity() {
                             1
                         } else
                             (rowValues[3] as Double).toInt()
+                        val sgtin: String = if (rowValues[0].toString().length > 31) {
+                            rowValues[0].toString().take(31)
+                        } else
+                            rowValues[0].toString().take(13)
                         mCurrentNomen = NomenData(
                             df.format(Date()),
                             fileIn.toString(),
                             rowValues[0].toString(),
+                            sgtin,
                             rowValues[1].toString(),
                             (rowValues[2] as Double).toDouble(),
                             (rowValues[3] as Double).toInt(),
@@ -198,7 +207,7 @@ class LoadActivity : AppCompatActivity() {
                         )
                         mAllViewModel.insertNomenBlocking(mCurrentNomen)
                     }
-//                    fileIn.delete()
+                    fileIn.delete()
                 } catch (e: DBFException) {
                     msg = h!!.obtainMessage(
                         1,
@@ -223,7 +232,7 @@ class LoadActivity : AppCompatActivity() {
                 }
             }
             msg = h!!.obtainMessage(
-                0,
+                4,
                 "Загружено!"
             )
             h!!.sendMessage(msg)

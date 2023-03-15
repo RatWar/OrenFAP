@@ -10,7 +10,8 @@ import androidx.room.PrimaryKey
 data class NomenData(
     @ColumnInfo(name = "DateTime") val dateTime: String,
     @ColumnInfo(name = "FileName") val fileName: String,
-    @ColumnInfo(name = "Barcode") val barcode: String,
+    @ColumnInfo(name = "Barcode") val barcode: String,  // полный код
+    @ColumnInfo(name = "SGTIN") var sgtin: String,      // 31 символ
     @ColumnInfo(name = "Name") val name: String,
     @ColumnInfo(name = "Price") var price: Double,
     @ColumnInfo(name = "Part") var part: Int,
