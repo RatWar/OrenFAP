@@ -1,10 +1,16 @@
 package com.besaba.anvarov.orentsd.activity
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +19,7 @@ import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.R
 import com.besaba.anvarov.orentsd.ScanListAdapter
 import com.besaba.anvarov.orentsd.databinding.ActivityDocumentBinding
+import com.besaba.anvarov.orentsd.extensions.toast
 import com.besaba.anvarov.orentsd.room.CountData
 import com.besaba.anvarov.orentsd.room.ScanData
 import java.text.SimpleDateFormat
@@ -35,6 +42,8 @@ class DocumentActivity : AppCompatActivity() {
     private lateinit var errSound: SoundPool
     private var soundId: Int = 0
     private var spLoaded = false
+    private var partScan: Int = 0
+    private var partAvailable: Int = 0
 
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
@@ -152,13 +161,20 @@ class DocumentActivity : AppCompatActivity() {
         if (mType == "DATA_MATRIX") {
             findBarcode()
         }
-        if (mType == "CODE_128"){
-            mSGTIN = mBarcode
-            handlerTransport()
-        }
         if (mType == "EAN_13"){
             mSGTIN = mBarcode
-            handlerEAN13()
+            partAvailable = checkInNomen(mSGTIN)
+            if (partAvailable == 0) {
+                soundPlay()
+                toast("Данной номенклатуры нет на остатках")
+            } else {
+                if (partAvailable > 1) {
+                    queryPart()
+                } else {
+                    partScan = partAvailable
+                    handlerEAN13()
+                }
+            }
         }
     }
 
@@ -167,10 +183,6 @@ class DocumentActivity : AppCompatActivity() {
         mBarcode = intent?.getStringExtra("EXTRA_BARCODE_DECODING_DATA").toString()
         if (mType == "Data Matrix") {
             findBarcode()
-        }
-        if (mType == "EAN-128"){
-            mSGTIN = mBarcode
-            handlerTransport()
         }
         if (mType == "EAN-13"){
             mSGTIN = mBarcode
@@ -233,49 +245,33 @@ class DocumentActivity : AppCompatActivity() {
         }
     }
 
-    private fun handlerTransport() {
-        if (checkNotDoubleScan(mSGTIN)) {
-            tableScan.add(mSGTIN)
-            val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
-            mCurrentScan = ScanData(
-                df.format(Date()),
-                mDocumentNumber,
-                "",
-                mSGTIN,
-                "Транспортная",
-                0.0,
-                0
-            )
-            mAllViewModel.insertScan(mCurrentScan)
-            setLayoutCount()
-        } else {
-            soundPlay()
-        }
-    }
-
     private fun handlerEAN13() {
-        if (checkInNomen(mSGTIN) == 0) {
-            tableScan.add(mSGTIN)
-            val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
+        if (partAvailable - partScan < 0) {
+            soundPlay()
+            toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
+        }
+        mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
+        tableScan.add(mSGTIN)
+        val mCurrentNom = mAllViewModel.getNomenByCode(mSGTIN.padEnd(31))
+        val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
+        if (mCurrentNom != null) {
             mCurrentScan = ScanData(
                 df.format(Date()),
                 mDocumentNumber,
-                "",
+                mCurrentNom.barcode,
                 mSGTIN,
-                "EAN-13",
-                0.0,
-                0
+                mCurrentNom.name,
+                mCurrentNom.price,
+                partScan
             )
-            mAllViewModel.insertScan(mCurrentScan)
-            setLayoutCount()
-        } else {
-            soundPlay()
         }
+        mAllViewModel.insertScan(mCurrentScan)
+        setLayoutCount()
     }
 
     private fun setLayoutCount() {
-        binding.matrixLayoutCount.text = tableScan.filter { it.length > 22 }.size.toString()
-        binding.transportLayoutCount.text = tableScan.filter { it.length <= 22 }.size.toString()
+        binding.matrixLayoutCount.text = tableScan.filter { it.length > 13 }.size.toString()
+        binding.transportLayoutCount.text = tableScan.filter { it.length <= 13 }.size.toString()
     }
 
     private fun soundPlay(){
@@ -342,6 +338,28 @@ class DocumentActivity : AppCompatActivity() {
         return if ((res == null) || (res == 0)) {
             0
         } else res
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun queryPart() {
+        val li = LayoutInflater.from(this)
+        val partsView: View = li.inflate(R.layout.query_part, null)
+        val mDialogBuilder = AlertDialog.Builder(this)
+        mDialogBuilder.setView(partsView)
+        val userInput = partsView.findViewById<View>(R.id.input_part) as EditText
+        val avPart = partsView.findViewById<View>(R.id.available_part) as TextView
+        avPart.text = "Доступно частей - $partAvailable"
+        mDialogBuilder
+            .setCancelable(false)
+            .setPositiveButton("OK") { _, _ ->
+                partScan = userInput.text.toString().toInt()
+                handlerEAN13()
+            }
+            .setNegativeButton(
+                "Отмена"
+            ) { dialogInterface, _ -> dialogInterface.cancel() }
+        val alertDialog: AlertDialog = mDialogBuilder.create()
+        alertDialog.show()
     }
 
 }

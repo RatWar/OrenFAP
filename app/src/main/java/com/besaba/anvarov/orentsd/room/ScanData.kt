@@ -16,5 +16,5 @@ data class ScanData(
     @ColumnInfo(name = "Part") var part: Int
 ){
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Long = 0
 }

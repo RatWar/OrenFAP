@@ -31,4 +31,6 @@
     <string name="camera">Camera</string>
     <string name="upload_ftp">Upload ftp</string>
     <string name="txtLoad">Загрузить...</string>
+    <string name="partNumber">Число</string>
+    <string name="numberParts">Ввести число частей</string>
 </resources>

@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 // таблица остатков
-@Entity(tableName = "NomenData", indices = [Index("Barcode")])
+@Entity(tableName = "NomenData", indices = [Index("SGTIN")])
 data class NomenData(
     @ColumnInfo(name = "DateTime") val dateTime: String,
     @ColumnInfo(name = "FileName") val fileName: String,
@@ -18,5 +18,5 @@ data class NomenData(
     @ColumnInfo(name = "Available") val available: Int
 ){
     @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
+    var id: Long = 0
 }
