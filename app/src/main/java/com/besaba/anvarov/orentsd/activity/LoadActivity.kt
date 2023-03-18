@@ -79,6 +79,7 @@ class LoadActivity : AppCompatActivity() {
             val inputDir = prefs.getString("et_preference_input", "nsi/").toString()
             val outputDir = prefs.getString("et_preference_output", "real/").toString()
             var msg: Message?
+            var countLoad: Int
             try {
                 ftpClient.connect(server, FTP.DEFAULT_PORT)
                 ftpClient.login(user, pass)
@@ -114,6 +115,7 @@ class LoadActivity : AppCompatActivity() {
                     "Получаю файлы остатков"
                 )
                 h!!.sendMessage(msg)
+                countLoad = 0
                 for (i in 0 until ftpFiles.size) {
                     if (ftpFiles[i].substring(ftpFiles[i].length - 3) != "DBF") {
                         continue
@@ -126,6 +128,7 @@ class LoadActivity : AppCompatActivity() {
                     val res = ftpClient.retrieveFile(inputDir + ftpFiles[i], fos)
                     if (res) {
                         ftpClient.rename(inputDir + ftpFiles[i], inputDir + ftpFiles[i] + ".tmp")
+                        countLoad += 1
                     }
                     fos.close()
                 }
@@ -238,7 +241,7 @@ class LoadActivity : AppCompatActivity() {
             h!!.sendMessage(msg)
             msg = h!!.obtainMessage(
                 1,
-                ""
+                "загружено файлов - $countLoad"
             )
             h!!.sendMessage(msg)
         }

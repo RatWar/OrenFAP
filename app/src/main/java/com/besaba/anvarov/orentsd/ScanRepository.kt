@@ -17,10 +17,6 @@ class ScanRepository(private val scanDataDao: ScanDataDao) {
         scanDataDao.getSGTINfromDocument(numDoc)
 
     @WorkerThread
-    suspend fun getDuplicate(numDoc: Int, sgtin: String): Int? =
-        scanDataDao.getDuplicate(numDoc, sgtin)
-
-    @WorkerThread
     suspend fun insert(scanData: ScanData) {
         scanDataDao.insert(scanData)
     }

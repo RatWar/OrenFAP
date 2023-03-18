@@ -9,8 +9,8 @@ import androidx.room.PrimaryKey
 data class ScanData(
     @ColumnInfo(name = "DateTime") val dateTime: String,
     @ColumnInfo(name = "NumDoc") val numDoc: Int,
-    @ColumnInfo(name = "Barcode") var scanCode: String,
-    @ColumnInfo(name = "SGTIN") var sgtin: String,
+    @ColumnInfo(name = "Barcode") var scanCode: String,  // полный код
+    @ColumnInfo(name = "SGTIN") var sgtin: String,       // 31 символ
     @ColumnInfo(name = "Name") var nameNomen: String,
     @ColumnInfo(name = "Price") var price: Double,
     @ColumnInfo(name = "Part") var part: Int

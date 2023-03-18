@@ -76,12 +76,6 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
-    fun getDuplicate(numDoc: Int, sgtin: String): Int? {
-        var res: Int?
-        runBlocking { res = mScanRepository.getDuplicate(numDoc, sgtin) }
-        return res
-    }
-
     fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {
         mNomenRepository.insert(nomenData)
     }

@@ -25,9 +25,6 @@ interface ScanDataDao {
     @Query("SELECT SGTIN FROM scanData where NumDoc = :numDoc")
     suspend fun getSGTINfromDocument(numDoc: Int): List<String>
 
-    @Query("SELECT 1 FROM scanData where NumDoc = :numDoc and SGTIN = :sgtin")
-    suspend fun getDuplicate(numDoc: Int, sgtin: String): Int?
-
     @Query("DELETE from ScanData where NumDoc = :numDoc")
     suspend fun delDoc(numDoc: Int)
 

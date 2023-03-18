@@ -30,7 +30,6 @@ import androidx.lifecycle.ViewModelProvider as ViewModelProvider1
 class DocumentActivity : AppCompatActivity() {
 
     private lateinit var mAllViewModel: AllViewModel
-    private var mBarcode: String = ""
     private var mSGTIN: String = ""
     private var fCamera: String? = ""
     private var fScan: String? = ""
@@ -156,96 +155,47 @@ class DocumentActivity : AppCompatActivity() {
 
     private fun onScannerResult(codes: Array<String>?){
         if (codes == null) return
-        val mType = codes[0]
-        mBarcode = codes[1]
-        if (mType == "DATA_MATRIX") {
-            findBarcode()
+        mSGTIN = codes[1]
+        if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
+            mSGTIN = mSGTIN.substring(1)
         }
-        if (mType == "EAN_13"){
-            mSGTIN = mBarcode
-            partAvailable = checkInNomen(mSGTIN)
-            if (partAvailable == 0) {
-                soundPlay()
-                toast("Данной номенклатуры нет на остатках")
+        mSGTIN = mSGTIN.take(31)
+        partAvailable = checkInNomen(mSGTIN)
+        if (partAvailable == 0) {
+            soundPlay()
+            toast("Данной номенклатуры нет на остатках")
+        } else {
+            if (partAvailable > 1) {
+                queryPart()
             } else {
-                if (partAvailable > 1) {
-                    queryPart()
-                } else {
-                    partScan = partAvailable
-                    handlerEAN13()
-                }
+                partScan = 1
+                handlerBarcode()
             }
         }
     }
 
     private fun onScan(intent: Intent?) {
-        val mType: String = intent?.getStringExtra("EXTRA_BARCODE_DECODING_SYMBOLE").toString() // "Data Matrix"
-        mBarcode = intent?.getStringExtra("EXTRA_BARCODE_DECODING_DATA").toString()
-        if (mType == "Data Matrix") {
-            findBarcode()
-        }
-        if (mType == "EAN-13"){
-            mSGTIN = mBarcode
-            handlerEAN13()
-        }
-    }
-
-    private fun findBarcode(){
-        mSGTIN = mBarcode
-        if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {
+        intent?.getStringExtra("EXTRA_BARCODE_DECODING_SYMBOLE").toString() // "Data Matrix"
+        mSGTIN = intent?.getStringExtra("EXTRA_BARCODE_DECODING_DATA").toString()
+        if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
             mSGTIN = mSGTIN.substring(1)
         }
-        mBarcode = mSGTIN.substring(2, 16)
-        handlerBarcode()
+        mSGTIN = mSGTIN.take(31)
+        partAvailable = checkInNomen(mSGTIN)
+        if (partAvailable == 0) {
+            soundPlay()
+            toast("Данной номенклатуры нет на остатках")
+        } else {
+            if (partAvailable > 1) {
+                queryPart()
+            } else {
+                partScan = 1
+                handlerBarcode()
+            }
+        }
     }
 
     private fun handlerBarcode() {
-        if (checkNotDoubleScan(mSGTIN)) {
-            tableScan.add(mSGTIN)
-            val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
-            val mNomen = mAllViewModel.getNomenByCode(mBarcode)
-            if (mNomen != null) {
-                mCurrentScan = ScanData(
-                    df.format(Date()),
-                    mDocumentNumber,
-                    mBarcode,
-                    mSGTIN,
-                    mNomen.name,
-                    0.0,
-                    0
-                )
-            } else {
-                val mNomen0 = mAllViewModel.getNomenByCode(mBarcode.trimStart('0'))
-                if (mNomen0 != null){
-                    mCurrentScan = ScanData(
-                        df.format(Date()),
-                        mDocumentNumber,
-                        mBarcode,
-                        mSGTIN,
-                        mNomen0.name,
-                        0.0,
-                        0
-                    )
-                } else {
-                    mCurrentScan = ScanData(
-                        df.format(Date()),
-                        mDocumentNumber,
-                        mBarcode,
-                        mSGTIN,
-                        "",
-                        0.0,
-                        0
-                    )
-                }
-            }
-            mAllViewModel.insertScan(mCurrentScan)
-            setLayoutCount()
-        } else {
-            soundPlay()
-        }
-    }
-
-    private fun handlerEAN13() {
         if (partAvailable - partScan < 0) {
             soundPlay()
             toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
@@ -270,8 +220,8 @@ class DocumentActivity : AppCompatActivity() {
     }
 
     private fun setLayoutCount() {
-        binding.matrixLayoutCount.text = tableScan.filter { it.length > 13 }.size.toString()
-        binding.transportLayoutCount.text = tableScan.filter { it.length <= 13 }.size.toString()
+        binding.matrixLayoutCount.text = tableScan.filter { it.length <= 13 }.size.toString()
+        binding.transportLayoutCount.text = tableScan.filter { it.length > 13 }.size.toString()
     }
 
     private fun soundPlay(){
@@ -327,11 +277,6 @@ class DocumentActivity : AppCompatActivity() {
         sendBroadcast(intent)
     }
 
-    // проверка, что скан не дубль
-    private fun checkNotDoubleScan(scan: String): Boolean{
-        return mAllViewModel.getDuplicate(mDocumentNumber, scan) != 1
-    }
-
     // проверка скана в остатках
     private fun checkInNomen(scan: String): Int{
         val res = mAllViewModel.countAvailable(scan.padEnd(31))
@@ -353,7 +298,7 @@ class DocumentActivity : AppCompatActivity() {
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
                 partScan = userInput.text.toString().toInt()
-                handlerEAN13()
+                handlerBarcode()
             }
             .setNegativeButton(
                 "Отмена"
