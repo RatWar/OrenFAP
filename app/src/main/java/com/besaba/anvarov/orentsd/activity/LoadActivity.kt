@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.R
+import com.besaba.anvarov.orentsd.extensions.addScan
+import com.besaba.anvarov.orentsd.extensions.writeJson
 import com.besaba.anvarov.orentsd.room.NomenData
 import com.linuxense.javadbf.DBFException
 import com.linuxense.javadbf.DBFReader
@@ -22,6 +24,7 @@ import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
 import org.apache.commons.net.ftp.FTPReply
+import org.json.JSONObject
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -133,7 +136,11 @@ class LoadActivity : AppCompatActivity() {
                     fos.close()
                 }
 // выгружаю расход в файлы
-//
+                mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
+                val res = onSave()
+                if (!res) {
+                    TODO()
+                }
 // передаю файлы
 //            val nameIn = "6_20221110_00_1.json"
 //            val fileIn =  File(path, nameIn)
@@ -171,7 +178,7 @@ class LoadActivity : AppCompatActivity() {
                 filename.lowercase(Locale.getDefault()).endsWith(".dbf")
             } as Array<File>
             if (filesArray.isNotEmpty()) {
-                mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
+//                mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
                 mAllViewModel.delNomen()
                 msg = h!!.obtainMessage(
                     1,
@@ -246,6 +253,40 @@ class LoadActivity : AppCompatActivity() {
             h!!.sendMessage(msg)
         }
         t.start()
+    }
+
+    private fun onSave(): Boolean {
+        val scans = mutableListOf<JSONObject>()
+        var numberDoc: Int = -1
+        var buf: Int = -1
+        var dateDoc = ""
+        var bufDoc = ""
+        val all = mAllViewModel.getAll()
+        if (all!!.isNotEmpty()) {
+            for (it in all) {
+                if ((it.numDoc == numberDoc) or (numberDoc == -1)) { // продолжаю заполнять массив
+                    scans.add(addScan(it))
+                    buf = it.numDoc
+                    bufDoc = it.dateTime
+                } else {                      // записываю документ и начинаю заполнять снова массив
+                    if (numberDoc == -1) {
+                        numberDoc = buf
+                        dateDoc = bufDoc
+                    }
+                    writeJson(scans.toString(), numberDoc, dateDoc, scans.size)
+                    numberDoc = it.numDoc
+                    dateDoc = it.dateTime
+                    scans.clear()
+                    scans.add(addScan(it))
+                }
+                if (numberDoc == -1) {
+                    numberDoc = buf
+                    dateDoc = bufDoc
+                }
+            }
+            return writeJson(scans.toString(), numberDoc, dateDoc, scans.size)
+        }
+        return true
     }
 
 }
