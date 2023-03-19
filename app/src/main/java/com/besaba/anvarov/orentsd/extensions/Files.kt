@@ -56,7 +56,12 @@ fun writeJsonFinish(): Boolean {
 
 fun addScan(scan: ScanData): JSONObject {
     val json = JSONObject()
-    json.put("SGTIN", scan.sgtin)
+    json.put("dateTime", scan.dateTime)
+    json.put("numDoc", scan.numDoc)
+    json.put("barcode", scan.barcode)
+    json.put("nameNomen", scan.nameNomen)
+    json.put("price", scan.price)
+    json.put("part", scan.part)
     return json
 }
 
