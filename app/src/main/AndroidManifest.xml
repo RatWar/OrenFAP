@@ -26,24 +26,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         tools:targetApi="s"
         tools:ignore="DataExtractionRules">
-        <activity
-            android:name=".activity.DeleteCodesActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.RUN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name=".activity.CodesActivity" />
-        <activity android:name=".activity.SaveActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.RUN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".activity.DocumentActivity"
             android:theme="@style/AppTheme.NoActionBar" />

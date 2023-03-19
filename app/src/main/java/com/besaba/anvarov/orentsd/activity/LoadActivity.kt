@@ -137,19 +137,19 @@ class LoadActivity : AppCompatActivity() {
                 }
 // выгружаю расход в файлы
                 mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
-                val res = onSave()
-                if (!res) {
-                    TODO()
-                }
+                onSaveCodesToJSON()
 // передаю файлы
-//            val nameIn = "6_20221110_00_1.json"
-//            val fileIn =  File(path, nameIn)
-//            val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
-//            val res = ftpClient.storeFile(outputDir + nameIn, fis)
-//            if (res) {
-// удаляю файлы
-//                println("Ok")
-//            }
+                val filesArray: Array<File> = path.listFiles { _, filename ->
+                    filename.lowercase(Locale.getDefault()).endsWith(".json")
+                } as Array<File>
+                for (fileIn in filesArray) {
+                    val fi = fileIn.name
+                    val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
+                    val res = ftpClient.storeFile(outputDir + fi, fis)
+                    if (res) {
+                        fileIn.delete()
+                    }
+                }
             } catch (ex: IOException) {
                 msg = h!!.obtainMessage(
                     1,
@@ -178,7 +178,6 @@ class LoadActivity : AppCompatActivity() {
                 filename.lowercase(Locale.getDefault()).endsWith(".dbf")
             } as Array<File>
             if (filesArray.isNotEmpty()) {
-//                mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
                 mAllViewModel.delNomen()
                 msg = h!!.obtainMessage(
                     1,
@@ -255,7 +254,7 @@ class LoadActivity : AppCompatActivity() {
         t.start()
     }
 
-    private fun onSave(): Boolean {
+    private fun onSaveCodesToJSON() {
         val scans = mutableListOf<JSONObject>()
         var numberDoc: Int = -1
         var buf: Int = -1
@@ -274,6 +273,7 @@ class LoadActivity : AppCompatActivity() {
                         dateDoc = bufDoc
                     }
                     writeJson(scans.toString(), numberDoc, dateDoc, scans.size)
+                    mAllViewModel.deleteDoc(numberDoc)
                     numberDoc = it.numDoc
                     dateDoc = it.dateTime
                     scans.clear()
@@ -284,9 +284,9 @@ class LoadActivity : AppCompatActivity() {
                     dateDoc = bufDoc
                 }
             }
-            return writeJson(scans.toString(), numberDoc, dateDoc, scans.size)
+            writeJson(scans.toString(), numberDoc, dateDoc, scans.size)
+            mAllViewModel.deleteDoc(numberDoc)
         }
-        return true
     }
 
 }
