@@ -26,10 +26,10 @@ class ScanListAdapter internal constructor(context: Context) : RecyclerView.Adap
     }
 
     inner class ScanViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val scanItemBarcode: TextView = itemView.findViewById(R.id.codeBarcode)
+        val scanItemPrice: TextView = itemView.findViewById(R.id.priceBarcode)
         val scanItemDelete: ImageView = itemView.findViewById(R.id.imageViewDelete)
         val scanItemName: TextView = itemView.findViewById(R.id.nameBarcode)
-        val scanItemEI: TextView = itemView.findViewById(R.id.cntBarcode)
+        val scanItemPart: TextView = itemView.findViewById(R.id.partBarcode)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -45,12 +45,14 @@ class ScanListAdapter internal constructor(context: Context) : RecyclerView.Adap
 
     override fun getItemCount() = scans.size
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ScanViewHolder, position: Int) {
         val current = scans[position]
-        holder.scanItemBarcode.text = current.barcode
+        holder.scanItemPrice.text = "Цена - " + current.priceNomen.toString()
+        holder.scanItemPart.text = "Частей - " + current.partNomen.toString()
         holder.scanItemName.text = current.nameNomen
 
-        holder.scanItemBarcode.setOnClickListener {
+        holder.scanItemPrice.setOnClickListener {
             val scan = scans[position]
             onScanClickListener?.onScanClick(scan, false)
         }
@@ -65,7 +67,7 @@ class ScanListAdapter internal constructor(context: Context) : RecyclerView.Adap
             onScanClickListener?.onScanClick(scan, false)
         }
 
-        holder.scanItemEI.setOnClickListener {
+        holder.scanItemPart.setOnClickListener {
             val scan = scans[position]
             onScanClickListener?.onScanClick(scan, false)
         }

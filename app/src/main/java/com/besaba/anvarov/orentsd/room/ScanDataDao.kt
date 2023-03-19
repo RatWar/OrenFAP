@@ -10,7 +10,7 @@ interface ScanDataDao {
     @Query("SELECT SGTIN from ScanData where NumDoc = :numDoc and Barcode = :barcode")
     fun getAllCodes(numDoc: Int, barcode: String): LiveData<List<CodesData>>
 
-    @Query("SELECT Barcode, substr(Name, 1, 25) as Name, count(*) as Cnt FROM ScanData where NumDoc = :numDoc group by Barcode order by Name")
+    @Query("SELECT Barcode as Barcode, substr(Name, 1, 30) as Name, Part as Part, Price as Price FROM ScanData where NumDoc = :numDoc")
     fun getAllScans(numDoc: Int): LiveData<List<CountData>>
 
     @Query("SELECT DateTime, NumDoc from ScanData group by NumDoc")
