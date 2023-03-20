@@ -23,6 +23,7 @@
                 android:id="@+id/countNomen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
                 android:text="@string/countNomen" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -54,6 +55,7 @@
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/add_nomenclature"
         android:src="@drawable/ic_add_nomenclature"
+        app:backgroundTint="@color/colorPrimaryDark"
         app:useCompatPadding="true" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -63,7 +65,7 @@
         android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="@dimen/fab_margin"
         android:contentDescription="@string/upload_ftp"
-        android:src="@drawable/ic_file_upload_24"
-        app:backgroundTint="@color/green" />
+        android:src="@drawable/ic_upload_file_2"
+        app:backgroundTint="@color/purple_500" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
