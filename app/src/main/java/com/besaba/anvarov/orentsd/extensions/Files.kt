@@ -5,11 +5,6 @@ import com.besaba.anvarov.orentsd.room.ScanData
 import org.json.JSONObject
 import java.io.*
 
-fun isExternalStorageReadable(): Boolean {
-    return Environment.getExternalStorageState() in
-            setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
-}
-
 fun isExternalStorageWritable(): Boolean {
     return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 }
@@ -23,26 +18,6 @@ fun writeJson(jsonString: String, numDoc: Int, dateDoc: String, countDoc: Int): 
             val outputStream: OutputStream = fileWrite.outputStream()
             val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream, "UTF-8"))
             bufferedWriter.write(jsonString)
-            bufferedWriter.flush()
-            bufferedWriter.close()
-            outputStream.close()
-            true
-        } catch (e: IOException) {
-            false
-        }
-    }
-    return false
-}
-
-fun writeJsonFinish(): Boolean {
-    if (isExternalStorageWritable()) {
-        return try {
-            @Suppress("DEPRECATION") val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val fileName = "finish2021.json"
-            val fileWrite = File(path, fileName)
-            val outputStream: OutputStream = fileWrite.outputStream()
-            val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream, "UTF-8"))
-            bufferedWriter.write("")
             bufferedWriter.flush()
             bufferedWriter.close()
             outputStream.close()

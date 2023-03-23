@@ -40,8 +40,8 @@ class CodesActivity : AppCompatActivity() {
 
         mAllViewModel = ViewModelProvider(this).get(AllViewModel::class.java)
         mAllViewModel.setNumDocAndBarcode(mNumDoc, mBarcode)
-        mAllViewModel.mAllCodes.observe(this, { codes ->
+        mAllViewModel.mAllCodes.observe(this) { codes ->
             codes?.let { codesAdapter.setCodes(it) }
-        })
+        }
     }
 }
