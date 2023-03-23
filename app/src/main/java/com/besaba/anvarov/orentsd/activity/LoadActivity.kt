@@ -19,7 +19,9 @@ import com.besaba.anvarov.orentsd.extensions.addScan
 import com.besaba.anvarov.orentsd.extensions.writeJson
 import com.besaba.anvarov.orentsd.room.NomenData
 import com.linuxense.javadbf.DBFException
+import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
+import com.linuxense.javadbf.DBFWriter
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
@@ -29,6 +31,7 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors
+
 
 class LoadActivity : AppCompatActivity() {
 
@@ -287,6 +290,54 @@ class LoadActivity : AppCompatActivity() {
             writeJson(scans.toString(), numberDoc, dateDoc, scans.size)
             mAllViewModel.deleteDoc(numberDoc)
         }
+    }
+
+    private fun onSaveCodesToDBF() {
+        val fields = arrayOfNulls<DBFField>(6)
+        fields[0] = DBFField()
+        fields[0]!!.name = "DATETIME"
+        fields[0]!!.dataType = DBFField.FIELD_TYPE_D
+        fields[1] = DBFField()
+        fields[1]!!.name = "NUMDOC"
+        fields[1]!!.dataType = DBFField.FIELD_TYPE_N
+        fields[1]!!.fieldLength = 3
+        fields[1]!!.decimalCount = 0
+        fields[2] = DBFField()
+        fields[2]!!.name = "BARCODE"
+        fields[2]!!.dataType = DBFField.FIELD_TYPE_C
+        fields[2]!!.fieldLength = 83
+        fields[3] = DBFField()
+        fields[3]!!.name = "NAME"
+        fields[3]!!.dataType = DBFField.FIELD_TYPE_C
+        fields[3]!!.fieldLength = 150
+        fields[4] = DBFField()
+        fields[4]!!.name = "PRICE"
+        fields[4]!!.dataType = DBFField.FIELD_TYPE_N
+        fields[4]!!.fieldLength = 10
+        fields[4]!!.decimalCount = 2
+        fields[5] = DBFField()
+        fields[5]!!.name = "PART"
+        fields[5]!!.dataType = DBFField.FIELD_TYPE_N
+        fields[5]!!.fieldLength = 3
+        fields[5]!!.decimalCount = 0
+        val writer = DBFWriter()
+        writer.setFields(fields)
+
+        var rowData = arrayOfNulls<Any>(3)
+        rowData[0] = "1000"
+        rowData[1] = "John"
+        rowData[2] = 5000.00
+        writer.addRecord(rowData)
+        rowData = arrayOfNulls(3)
+        rowData[0] = "1001"
+        rowData[1] = "Lalit"
+        rowData[2] = 3400.00
+        writer.addRecord(rowData)
+        rowData = arrayOfNulls(3)
+        rowData[0] = "1002"
+        rowData[1] = "Rohit"
+        rowData[2] = 7350.00
+        writer.addRecord(rowData)
     }
 
 }
