@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.besaba.anvarov.orentsd.room.DocumentData
@@ -26,7 +25,6 @@ class DocListAdapter internal constructor(context: Context): RecyclerView.Adapte
 
     inner class DocViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val docItemView: TextView = itemView.findViewById(R.id.textView)
-        val docItemDelete: ImageView = itemView.findViewById(R.id.imageView)
     }
 
     internal fun setDocs(docData: List<DocumentData>) {
@@ -50,9 +48,5 @@ class DocListAdapter internal constructor(context: Context): RecyclerView.Adapte
             onDocClickListener?.onDocClick(doc, false)
         }
 
-        holder.docItemDelete.setOnClickListener {
-            val doc = docs[position]
-            onDocClickListener?.onDocClick(doc, true)
-        }
     }
 }

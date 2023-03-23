@@ -19,9 +19,7 @@ import com.besaba.anvarov.orentsd.extensions.addScan
 import com.besaba.anvarov.orentsd.extensions.writeJson
 import com.besaba.anvarov.orentsd.room.NomenData
 import com.linuxense.javadbf.DBFException
-import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
-import com.linuxense.javadbf.DBFWriter
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPFile
