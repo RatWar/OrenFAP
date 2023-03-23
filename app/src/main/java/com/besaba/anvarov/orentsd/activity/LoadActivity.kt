@@ -76,11 +76,11 @@ class LoadActivity : AppCompatActivity() {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-            val server = prefs.getString("et_preference_server", "ftp1.oas-orb.ru").toString()
-            val user = prefs.getString("et_preference_login", "00000000").toString()
+            val server = prefs.getString("et_preference_server", "").toString()
+            val user = prefs.getString("et_preference_login", "").toString()
             val pass = prefs.getString("et_preference_password", "").toString()
-            val inputDir = prefs.getString("et_preference_input", "nsi/").toString()
-            val outputDir = prefs.getString("et_preference_output", "real/").toString()
+            val inputDir = prefs.getString("et_preference_input", "").toString()
+            val outputDir = prefs.getString("et_preference_output", "").toString()
             var msg: Message?
             var countLoad: Int
             try {
