@@ -71,6 +71,7 @@ class DocumentActivity : AppCompatActivity() {
         val onScanClickListener = object : ScanListAdapter.OnScanClickListener {
             override fun onScanClick(scan: CountData, del: Boolean) {
                 if (del) {
+//                    mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
                     mAllViewModel.deleteBarcode(mDocumentNumber, scan.barcode)
                     tableScan.clear()
                     tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
