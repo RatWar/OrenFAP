@@ -10,7 +10,7 @@ interface ScanDataDao {
     @Query("SELECT SGTIN from ScanData where NumDoc = :numDoc and Barcode = :barcode")
     fun getAllCodes(numDoc: Int, barcode: String): LiveData<List<CodesData>>
 
-    @Query("SELECT Barcode as Barcode, substr(Name, 1, 30) as Name, Part as Part, Price as Price FROM ScanData where NumDoc = :numDoc")
+    @Query("SELECT Barcode as Barcode, substr(Name, 1, 30) as Name, Part as Part, Price as Price, id as id FROM ScanData where NumDoc = :numDoc")
     fun getAllScans(numDoc: Int): LiveData<List<CountData>>
 
     @Query("SELECT DateTime, NumDoc from ScanData group by NumDoc")
@@ -28,8 +28,8 @@ interface ScanDataDao {
     @Query("DELETE from ScanData where NumDoc = :numDoc")
     suspend fun delDoc(numDoc: Int)
 
-    @Query("DELETE from ScanData where NumDoc = :numDoc and Barcode = :barcode")
-    suspend fun delBarcode(numDoc: Int, barcode: String)
+    @Query("DELETE from ScanData where id = :id")
+    suspend fun delBarcode(id: Long)
 
     @Query("DELETE from ScanData where NumDoc = :numDoc and SGTIN = :sgtin")
     suspend fun delSGTIN(numDoc: Int, sgtin: String)

@@ -72,7 +72,7 @@ class DocumentActivity : AppCompatActivity() {
             override fun onScanClick(scan: CountData, del: Boolean) {
                 if (del) {
                     mAllViewModel.updateAvailableScan(scan.barcode.padEnd(31), scan.partNomen)
-                    mAllViewModel.deleteBarcode(mDocumentNumber, scan.barcode)
+                    mAllViewModel.deleteBarcode(scan.id)
                     tableScan.clear()
                     tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
                     setLayoutCount()
