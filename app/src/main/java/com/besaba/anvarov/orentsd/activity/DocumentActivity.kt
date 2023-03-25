@@ -21,6 +21,7 @@ import com.besaba.anvarov.orentsd.ScanListAdapter
 import com.besaba.anvarov.orentsd.databinding.ActivityDocumentBinding
 import com.besaba.anvarov.orentsd.extensions.toast
 import com.besaba.anvarov.orentsd.room.CountData
+import com.besaba.anvarov.orentsd.room.NomenData
 import com.besaba.anvarov.orentsd.room.ScanData
 import java.text.SimpleDateFormat
 import java.util.*
@@ -71,13 +72,16 @@ class DocumentActivity : AppCompatActivity() {
         val onScanClickListener = object : ScanListAdapter.OnScanClickListener {
             override fun onScanClick(scan: CountData, del: Boolean) {
                 if (del) {
-//                    mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
-                    mAllViewModel.deleteBarcode(mDocumentNumber, scan.barcode)
+//                    val mCode: String = scan.barcode.padEnd(31)
+//                    val mPad = checkInNomen(scan.barcode)
+//                    val mNomen: NomenData = mAllViewModel.getNomenByCode(mCode)!!
+//                    mAllViewModel.updateAvailable(scan.barcode.padEnd(31), 100)
+                    mAllViewModel.deleteBarcodeId(scan.id)
                     tableScan.clear()
                     tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
                     setLayoutCount()
-                } else {
-                    onCodes(scan.barcode)
+//                } else {
+//                    onCodes(scan.barcode)
                 }
             }
         }
@@ -201,7 +205,7 @@ class DocumentActivity : AppCompatActivity() {
             soundPlay()
             toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
         }
-        mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
+//        mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
         tableScan.add(mSGTIN)
         val mCurrentNom = mAllViewModel.getNomenByCode(mSGTIN.padEnd(31))
         val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
@@ -213,7 +217,8 @@ class DocumentActivity : AppCompatActivity() {
                 mSGTIN,
                 mCurrentNom.name,
                 mCurrentNom.price,
-                partScan
+                partScan,
+                true
             )
         }
         mAllViewModel.insertScan(mCurrentScan)

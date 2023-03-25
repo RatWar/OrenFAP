@@ -31,8 +31,8 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mScanRepository.insert(scanData)
     }
 
-    fun deleteBarcode(numDoc: Int, barcode: String) = viewModelScope.launch(Dispatchers.IO) {
-        mScanRepository.deleteBarcode(numDoc, barcode)
+    fun deleteBarcodeId(id: Long) = viewModelScope.launch(Dispatchers.IO) {
+        mScanRepository.deleteBarcodeId(id)
     }
 
     fun deleteSGTIN(numDoc: Int, sgtin: String) = viewModelScope.launch(Dispatchers.IO) {

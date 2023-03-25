@@ -22,8 +22,8 @@ class ScanRepository(private val scanDataDao: ScanDataDao) {
     }
 
     @WorkerThread
-    suspend fun deleteBarcode(numDoc: Int, barcode: String) {
-        scanDataDao.delBarcode(numDoc, barcode)
+    suspend fun deleteBarcodeId(id: Long) {
+        scanDataDao.delBarcodeId(id)
     }
 
     @WorkerThread
