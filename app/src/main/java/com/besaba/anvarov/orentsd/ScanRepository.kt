@@ -51,4 +51,9 @@ class ScanRepository(private val scanDataDao: ScanDataDao) {
         return scanDataDao.getAll()
     }
 
+    @WorkerThread
+    suspend fun updateAvailable(barcode: String, available: Int) {
+        return scanDataDao.updateAvailable(barcode, available)
+    }
+
 }

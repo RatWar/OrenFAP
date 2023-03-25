@@ -40,4 +40,6 @@ interface ScanDataDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(scanData: ScanData)
 
+    @Query("UPDATE NomenData set available = available + :available where SGTIN = :barcode")
+    suspend fun updateAvailable(barcode: String, available: Int)
 }

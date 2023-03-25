@@ -71,7 +71,7 @@ class DocumentActivity : AppCompatActivity() {
         val onScanClickListener = object : ScanListAdapter.OnScanClickListener {
             override fun onScanClick(scan: CountData, del: Boolean) {
                 if (del) {
-//                    mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
+                    mAllViewModel.updateAvailableScan(scan.barcode.padEnd(31), scan.partNomen)
                     mAllViewModel.deleteBarcode(mDocumentNumber, scan.barcode)
                     tableScan.clear()
                     tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
@@ -201,7 +201,8 @@ class DocumentActivity : AppCompatActivity() {
             soundPlay()
             toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
         }
-        mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
+//        mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
+        mAllViewModel.updateAvailable(mSGTIN.padEnd(31), -partScan)
         tableScan.add(mSGTIN)
         val mCurrentNom = mAllViewModel.getNomenByCode(mSGTIN.padEnd(31))
         val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))

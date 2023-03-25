@@ -76,6 +76,10 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
+    fun updateAvailableScan(barcode: String, available: Int) = viewModelScope.launch(Dispatchers.IO) {
+        mScanRepository.updateAvailable(barcode, available)
+    }
+
     fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {
         mNomenRepository.insert(nomenData)
     }
