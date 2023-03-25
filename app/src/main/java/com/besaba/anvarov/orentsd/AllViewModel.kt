@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.besaba.anvarov.orentsd.room.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -32,13 +31,8 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mScanRepository.insert(scanData)
     }
 
-    fun deleteBarcode(id: Long) = viewModelScope.launch(Dispatchers.IO) {
-        mScanRepository.deleteBarcode(id)
-    }
-
-    fun deleteBarcodeAndUpdateNom(id: Long, barcode: String, available: Int) = viewModelScope.launch(Dispatchers.IO) {
-        mNomenRepository.updateAvailable(barcode, available)
-        mScanRepository.deleteBarcode(id)
+    fun deleteBarcodeId(id: Long) = viewModelScope.launch(Dispatchers.IO) {
+        mScanRepository.deleteBarcodeId(id)
     }
 
     fun deleteSGTIN(numDoc: Int, sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -80,10 +74,6 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         var res: List<String>
         runBlocking { res = mScanRepository.getSGTINfromDocument(numDoc) }
         return res
-    }
-
-    fun updateAvailableScan(barcode: String, available: Int) = viewModelScope.launch(Dispatchers.IO) {
-        mScanRepository.updateAvailable(barcode, available)
     }
 
     fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {

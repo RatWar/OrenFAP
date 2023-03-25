@@ -1,6 +1,7 @@
 package com.besaba.anvarov.orentsd.room
 
 import androidx.room.ColumnInfo
+import androidx.room.PrimaryKey
 
 data class CountData(
         @ColumnInfo(name = "Barcode") val barcode: String,

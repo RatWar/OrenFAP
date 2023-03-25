@@ -22,8 +22,8 @@ class ScanRepository(private val scanDataDao: ScanDataDao) {
     }
 
     @WorkerThread
-    suspend fun deleteBarcode(id: Long) {
-        scanDataDao.delBarcode(id)
+    suspend fun deleteBarcodeId(id: Long) {
+        scanDataDao.delBarcodeId(id)
     }
 
     @WorkerThread
@@ -49,11 +49,6 @@ class ScanRepository(private val scanDataDao: ScanDataDao) {
     @WorkerThread
     suspend fun getAll(): List<ScanData>? {
         return scanDataDao.getAll()
-    }
-
-    @WorkerThread
-    suspend fun updateAvailable(barcode: String, available: Int) {
-        return scanDataDao.updateAvailable(barcode, available)
     }
 
 }

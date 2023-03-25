@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [ScanData::class, NomenData::class], exportSchema = false, version = 1)
 abstract class TSDDatabase : RoomDatabase() {
@@ -28,10 +29,27 @@ abstract class TSDDatabase : RoomDatabase() {
                     // если при запуске приложения Room увидит, что необходима миграция,
                     // то он просто пересоздаст базу с новой структурой Entity классов и все данные пропадут.
                     .fallbackToDestructiveMigration()
+                    .addCallback(CALLBACK)
                     .build()
                 sINSTANCE = instance
                 // return instance
                 instance
+            }
+        }
+
+        private val CALLBACK = object : Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+
+                db.execSQL("CREATE TRIGGER deletePart AFTER INSERT ON ScanData \n" +
+                        "BEGIN \t\n" +
+                        "\tUPDATE NomenData SET Available = Available - NEW.Part WHERE SGTIN = NEW.SGTIN; \n" +
+                        "END;\n" +
+                        "DROP TRIGGER deletePart;")
+                db.execSQL("CREATE TRIGGER addPart BEFORE DELETE ON ScanData \n" +
+                        "BEGIN \t\n" +
+                        "\tUPDATE NomenData SET Available = Available + OLD.Part WHERE SGTIN = OLD.SGTIN; \n" +
+                        "END;")
             }
         }
     }
