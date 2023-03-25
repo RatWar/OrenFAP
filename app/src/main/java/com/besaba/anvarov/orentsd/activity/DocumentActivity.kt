@@ -76,8 +76,8 @@ class DocumentActivity : AppCompatActivity() {
                     tableScan.clear()
                     tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
                     setLayoutCount()
-                } else {
-                    onCodes(scan.barcode)
+//                } else {
+//                    onCodes(scan.barcode)
                 }
             }
         }
