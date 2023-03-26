@@ -102,8 +102,9 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
-    fun updateAvailable(barcode: String, available: Int) = viewModelScope.launch(Dispatchers.IO) {
-        mNomenRepository.updateAvailable(barcode, available)
+    fun updateAvailable(id: Long, available: Int) = viewModelScope.launch(Dispatchers.IO) {
+//        mNomenRepository.updateAvailable(barcode, available)
+        mNomenRepository.updateAvailable(id, available)
     }
 
     fun delNomen() {
