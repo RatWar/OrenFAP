@@ -13,7 +13,8 @@ data class ScanData(
     @ColumnInfo(name = "SGTIN") var sgtin: String,       // 31 символ
     @ColumnInfo(name = "Name") var nameNomen: String,
     @ColumnInfo(name = "Price") var price: Double,
-    @ColumnInfo(name = "Part") var part: Int
+    @ColumnInfo(name = "Part") var part: Int,
+    @ColumnInfo(name = "NomId") var nomId: Long
 ){
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0

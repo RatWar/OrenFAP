@@ -266,6 +266,7 @@ class LoadActivity : AppCompatActivity() {
             for (it in all) {
                 if ((it.numDoc == numberDoc) or (numberDoc == -1)) { // продолжаю заполнять массив
                     scans.add(addScan(it))
+                    mAllViewModel.updateAvailable(it.nomId, -it.part)
                     buf = it.numDoc
                     bufDoc = it.dateTime
                 } else {                      // записываю документ и начинаю заполнять снова массив
@@ -279,6 +280,7 @@ class LoadActivity : AppCompatActivity() {
                     dateDoc = it.dateTime
                     scans.clear()
                     scans.add(addScan(it))
+                    mAllViewModel.updateAvailable(it.nomId, -it.part)
                 }
                 if (numberDoc == -1) {
                     numberDoc = buf

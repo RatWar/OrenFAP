@@ -217,7 +217,8 @@ class DocumentActivity : AppCompatActivity() {
                 mSGTIN,
                 mCurrentNom.name,
                 mCurrentNom.price,
-                partScan
+                partScan,
+                mCurrentNom.id
             )
         }
         mAllViewModel.insertScan(mCurrentScan)
