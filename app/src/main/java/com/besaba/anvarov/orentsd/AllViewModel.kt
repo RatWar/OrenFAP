@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.besaba.anvarov.orentsd.room.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -32,6 +33,11 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteBarcode(id: Long) = viewModelScope.launch(Dispatchers.IO) {
+        mScanRepository.deleteBarcode(id)
+    }
+
+    fun deleteBarcodeAndUpdateNom(id: Long, barcode: String, available: Int) = viewModelScope.launch(Dispatchers.IO) {
+        mNomenRepository.updateAvailable(barcode, available)
         mScanRepository.deleteBarcode(id)
     }
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.*
 import android.media.AudioAttributes
 import android.media.SoundPool
+import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -37,12 +38,14 @@ class DocumentActivity : AppCompatActivity() {
     private lateinit var mCurrentScan: ScanData
     private var keycode: Int = 0
     private val tableScan = mutableListOf<String>()
+    private val tableDeleted = mutableListOf<String>()
     private lateinit var binding: ActivityDocumentBinding
     private lateinit var errSound: SoundPool
     private var soundId: Int = 0
     private var spLoaded = false
     private var partScan: Int = 0
     private var partAvailable: Int = 0
+
 
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
@@ -71,11 +74,15 @@ class DocumentActivity : AppCompatActivity() {
         val onScanClickListener = object : ScanListAdapter.OnScanClickListener {
             override fun onScanClick(scan: CountData, del: Boolean) {
                 if (del) {
-                    mAllViewModel.updateAvailableScan(scan.barcode.padEnd(31), scan.partNomen)
-                    mAllViewModel.deleteBarcode(scan.id)
-                    tableScan.clear()
-                    tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
-                    setLayoutCount()
+//                    mAllViewModel.updateAvailableScan(scan.barcode.padEnd(31), scan.partNomen)
+//                    val intent = intent
+//                    intent.action = "com.xcheng.scanner.action.BARCODE_DECODING_BROADCAST"
+//                    sendBroadcast(intent)
+                    tableDeleted.add(scan.barcode.padEnd(31))
+                    mAllViewModel.deleteBarcodeAndUpdateNom(scan.id, scan.barcode.padEnd(31), scan.partNomen)
+//                    tableScan.clear()
+//                    tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
+//                    setLayoutCount()
 //                } else {
 //                    onCodes(scan.barcode)
                 }
@@ -94,6 +101,7 @@ class DocumentActivity : AppCompatActivity() {
         mAllViewModel.mAllScans.observe(this) { scans ->
             scans?.let { scanAdapter.setScans(it) }
         }
+
         tableScan.clear()
         tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
         setLayoutCount()
