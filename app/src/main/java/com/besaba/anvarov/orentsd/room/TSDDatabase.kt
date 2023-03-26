@@ -44,8 +44,7 @@ abstract class TSDDatabase : RoomDatabase() {
                 db.execSQL("CREATE TRIGGER deletePart AFTER INSERT ON ScanData \n" +
                         "BEGIN \t\n" +
                         "\tUPDATE NomenData SET Available = Available - NEW.Part WHERE SGTIN = NEW.SGTIN; \n" +
-                        "END;\n" +
-                        "DROP TRIGGER deletePart;")
+                        "END;\n")
                 db.execSQL("CREATE TRIGGER addPart BEFORE DELETE ON ScanData \n" +
                         "BEGIN \t\n" +
                         "\tUPDATE NomenData SET Available = Available + OLD.Part WHERE SGTIN = OLD.SGTIN; \n" +
