@@ -72,10 +72,6 @@ class DocumentActivity : AppCompatActivity() {
         val onScanClickListener = object : ScanListAdapter.OnScanClickListener {
             override fun onScanClick(scan: CountData, del: Boolean) {
                 if (del) {
-//                    val mCode: String = scan.barcode.padEnd(31)
-//                    val mPad = checkInNomen(scan.barcode)
-//                    val mNomen: NomenData = mAllViewModel.getNomenByCode(mCode)!!
-//                    mAllViewModel.updateAvailable(scan.barcode.padEnd(31), 100)
                     mAllViewModel.deleteBarcodeId(scan.id)
                     tableScan.clear()
                     tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
@@ -205,7 +201,6 @@ class DocumentActivity : AppCompatActivity() {
             soundPlay()
             toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
         }
-//        mAllViewModel.updateAvailable(mSGTIN.padEnd(31), partAvailable - partScan)
         tableScan.add(mSGTIN)
         val mCurrentNom = mAllViewModel.getNomenByCode(mSGTIN.padEnd(31))
         val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
@@ -303,8 +298,11 @@ class DocumentActivity : AppCompatActivity() {
         mDialogBuilder
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
-                partScan = userInput.text.toString().toInt()
-                handlerBarcode()
+                val memPartScan = userInput.text.toString()
+                if (memPartScan != "") {
+                    partScan = memPartScan.toInt()
+                    handlerBarcode()
+                }
             }
             .setNegativeButton(
                 "Отмена"

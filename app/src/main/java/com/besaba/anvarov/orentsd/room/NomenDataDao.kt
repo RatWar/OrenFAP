@@ -17,10 +17,8 @@ interface NomenDataDao {
     @Query("SELECT Available from NomenData where SGTIN = :barcode")
     suspend fun countAvailable(barcode: String): Int?
 
-//    @Query("UPDATE NomenData set available = available + :available where SGTIN = :barcode")
     @Query("UPDATE NomenData set available = available + :available where id = :id")
     suspend fun updateAvailable(id: Long, available: Int)
-//    suspend fun updateAvailable(barcode: String, available: Int)
 
     @Query("DELETE from NomenData")
     suspend fun delNomen()
