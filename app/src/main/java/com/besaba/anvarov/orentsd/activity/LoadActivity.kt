@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.Message
 import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -41,28 +40,23 @@ class LoadActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_load)
-        val tvInfo = findViewById<View>(R.id.tvStatus) as TextView
+        val tvInfoLoad = findViewById<View>(R.id.tvStatusL) as TextView
+        val tvInfoUpload = findViewById<View>(R.id.tvStatusU) as TextView
         val btLoad = findViewById<View>(R.id.btnLoad) as Button
-        val pbDownload = findViewById<View>(R.id.pbDownload) as ProgressBar
         btLoad.setOnClickListener { onLoad() }
         h = object : Handler() {
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
-                    0 -> {
+                    0 -> {  // кнопка - надпись
                         btLoad.text = msg.obj.toString()
                     }
-                    1 -> {
-                        tvInfo.text = msg.obj.toString()
+                    1 -> {  // сколько загружено
+                        tvInfoLoad.text = msg.obj.toString()
                     }
-                    2 -> {
-                        pbDownload.max = msg.arg1
-                        pbDownload.progress = 0
-                        pbDownload.visibility = View.VISIBLE
+                    2 -> {  // сколько выгружено
+                        tvInfoUpload.text = msg.obj.toString()
                     }
-                    3 -> {
-                        pbDownload.progress = msg.arg1
-                    }
-                    4 -> {
+                    3 -> {  // кнопка - надпись + отключение
                         btLoad.text = msg.obj.toString()
                         btLoad.isEnabled = false
                     }
@@ -84,6 +78,7 @@ class LoadActivity : AppCompatActivity() {
             val outputDir = prefs.getString("et_preference_output", "").toString()
             var msg: Message?
             var countLoad: Int
+            var countUpload: Int
             try {
                 ftpClient.connect(server, FTP.DEFAULT_PORT)
                 ftpClient.login(user, pass)
@@ -99,7 +94,7 @@ class LoadActivity : AppCompatActivity() {
                 }
                 msg = h!!.obtainMessage(
                     0,
-                    "Загружаю..."
+                    "Идет обмен..."
                 )
                 h!!.sendMessage(msg)
                 ftpClient.enterLocalPassiveMode()
@@ -136,6 +131,18 @@ class LoadActivity : AppCompatActivity() {
                     }
                     fos.close()
                 }
+                msg = if (countLoad > 0) {
+                    h!!.obtainMessage(
+                        1,
+                        "Загружено файлов - $countLoad"
+                    )
+                } else {
+                    h!!.obtainMessage(
+                        1,
+                        ""
+                    )
+                }
+                h!!.sendMessage(msg)
 // выгружаю расход в файлы
                 mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
                 onSaveCodesToJSON()
@@ -143,18 +150,32 @@ class LoadActivity : AppCompatActivity() {
                 val filesArray: Array<File> = path.listFiles { _, filename ->
                     filename.lowercase(Locale.getDefault()).endsWith(".json")
                 } as Array<File>
+                countUpload = 0
                 for (fileIn in filesArray) {
                     val fi = fileIn.name
                     val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
                     val res = ftpClient.storeFile(outputDir + fi, fis)
                     if (res) {
+                        countUpload += 1
                         fileIn.delete()
                     }
                 }
+                msg = if (countUpload > 0) {
+                    h!!.obtainMessage(
+                        2,
+                        "Выгружено файлов - $countUpload"
+                    )
+                } else {
+                    h!!.obtainMessage(
+                        2,
+                        ""
+                    )
+                }
+                h!!.sendMessage(msg)
             } catch (ex: IOException) {
                 msg = h!!.obtainMessage(
                     1,
-                    "Ошибка при загрузке"
+                    "Ошибка при обмене"
                 )
                 h!!.sendMessage(msg)
                 ex.printStackTrace()
@@ -242,8 +263,8 @@ class LoadActivity : AppCompatActivity() {
                 }
             }
             msg = h!!.obtainMessage(
-                4,
-                "Загружено!"
+                3,
+                "Обмен завершен!"
             )
             h!!.sendMessage(msg)
             msg = h!!.obtainMessage(
