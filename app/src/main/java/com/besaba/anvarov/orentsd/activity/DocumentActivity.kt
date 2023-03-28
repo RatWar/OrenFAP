@@ -21,7 +21,6 @@ import com.besaba.anvarov.orentsd.ScanListAdapter
 import com.besaba.anvarov.orentsd.databinding.ActivityDocumentBinding
 import com.besaba.anvarov.orentsd.extensions.toast
 import com.besaba.anvarov.orentsd.room.CountData
-import com.besaba.anvarov.orentsd.room.NomenData
 import com.besaba.anvarov.orentsd.room.ScanData
 import java.text.SimpleDateFormat
 import java.util.*
@@ -143,12 +142,12 @@ class DocumentActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun onCodes(barcode: String) {
-        val intent = Intent(this, CodesActivity::class.java)
-        intent.putExtra("Barcode", barcode)
-        intent.putExtra("NumDoc", mDocumentNumber)
-        startActivity(intent)
-    }
+//    private fun onCodes(barcode: String) {
+//        val intent = Intent(this, CodesActivity::class.java)
+//        intent.putExtra("Barcode", barcode)
+//        intent.putExtra("NumDoc", mDocumentNumber)
+//        startActivity(intent)
+//    }
 
     private fun onScanner() {
         getBarcode.launch(fCamera!!.toInt())
