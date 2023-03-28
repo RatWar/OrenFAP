@@ -27,6 +27,11 @@ class NomenRepository (private val nomenDataDao: NomenDataDao) {
     }
 
     @WorkerThread
+    suspend fun countPart(barcode: String): Int? {
+        return nomenDataDao.countPart(barcode)
+    }
+
+    @WorkerThread
     suspend fun updateAvailable(id: Long, available: Int) {
         return nomenDataDao.updateAvailable(id, available)
     }

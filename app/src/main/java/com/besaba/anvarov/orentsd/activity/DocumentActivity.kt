@@ -43,6 +43,7 @@ class DocumentActivity : AppCompatActivity() {
     private var spLoaded = false
     private var partScan: Int = 0
     private var partAvailable: Int = 0
+    private var partTotal: Int = 0
 
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
@@ -75,8 +76,6 @@ class DocumentActivity : AppCompatActivity() {
                     tableScan.clear()
                     tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
                     setLayoutCount()
-//                } else {
-//                    onCodes(scan.barcode)
                 }
             }
         }
@@ -142,13 +141,6 @@ class DocumentActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-//    private fun onCodes(barcode: String) {
-//        val intent = Intent(this, CodesActivity::class.java)
-//        intent.putExtra("Barcode", barcode)
-//        intent.putExtra("NumDoc", mDocumentNumber)
-//        startActivity(intent)
-//    }
-
     private fun onScanner() {
         getBarcode.launch(fCamera!!.toInt())
     }
@@ -166,6 +158,7 @@ class DocumentActivity : AppCompatActivity() {
             toast("Данной номенклатуры нет на остатках")
         } else {
             if (partAvailable > 1) {
+                partTotal = checkPartNomen(mSGTIN)
                 queryPart()
             } else {
                 partScan = 1
@@ -187,6 +180,7 @@ class DocumentActivity : AppCompatActivity() {
             toast("Данной номенклатуры нет на остатках")
         } else {
             if (partAvailable > 1) {
+                partTotal = checkPartNomen(mSGTIN)
                 queryPart()
             } else {
                 partScan = 1
@@ -285,6 +279,14 @@ class DocumentActivity : AppCompatActivity() {
         } else res
     }
 
+    // сколько всего частей в остатках
+    private fun checkPartNomen(scan: String): Int{
+        val res = mAllViewModel.countPart(scan.padEnd(31))
+        return if ((res == null) || (res == 0)) {
+            0
+        } else res
+    }
+
     @SuppressLint("SetTextI18n")
     private fun queryPart() {
         val li = LayoutInflater.from(this)
@@ -293,7 +295,7 @@ class DocumentActivity : AppCompatActivity() {
         mDialogBuilder.setView(partsView)
         val userInput = partsView.findViewById<View>(R.id.input_part) as EditText
         val avPart = partsView.findViewById<View>(R.id.available_part) as TextView
-        avPart.text = "Доступно частей - $partAvailable"
+        avPart.text = "Доступно частей - $partAvailable из $partTotal"
         mDialogBuilder
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->

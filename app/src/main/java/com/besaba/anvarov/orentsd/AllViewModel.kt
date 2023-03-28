@@ -102,8 +102,13 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
+    fun countPart(barcode: String): Int? {
+        var res: Int?
+        runBlocking { res = mNomenRepository.countPart(barcode) }
+        return res
+    }
+
     fun updateAvailable(id: Long, available: Int) = viewModelScope.launch(Dispatchers.IO) {
-//        mNomenRepository.updateAvailable(barcode, available)
         mNomenRepository.updateAvailable(id, available)
     }
 
