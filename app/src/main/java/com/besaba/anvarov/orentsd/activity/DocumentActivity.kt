@@ -201,7 +201,7 @@ class DocumentActivity : AppCompatActivity() {
             mCurrentScan = ScanData(
                 df.format(Date()),
                 mDocumentNumber,
-                mCurrentNom.barcode,
+                mCurrentNom.barcode.trim(),
                 mSGTIN,
                 mCurrentNom.name,
                 mCurrentNom.price,

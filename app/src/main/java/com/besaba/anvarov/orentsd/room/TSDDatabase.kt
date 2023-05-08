@@ -42,10 +42,12 @@ abstract class TSDDatabase : RoomDatabase() {
                 super.onCreate(db)
 
                 db.execSQL("CREATE TRIGGER deletePart AFTER INSERT ON ScanData \n" +
+                        "WHEN LENGTH(NEW.Barcode) > 13 \n" +
                         "BEGIN \t\n" +
                         "\tUPDATE NomenData SET Available = Available - NEW.Part WHERE id = NEW.NomId; \n" +
                         "END;\n")
                 db.execSQL("CREATE TRIGGER addPart BEFORE DELETE ON ScanData \n" +
+                        "WHEN LENGTH(OLD.Barcode) > 13 \n" +
                         "BEGIN \t\n" +
                         "\tUPDATE NomenData SET Available = Available + OLD.Part WHERE id = OLD.NomId; \n" +
                         "END;")

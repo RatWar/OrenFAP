@@ -42,6 +42,7 @@
             android:key="et_preference_password"
             android:selectAllOnFocus="true"
             android:singleLine="true"
+            android:inputType="textPassword"
             android:title="@string/ftp_password" />
         <EditTextPreference
             android:defaultValue="nsi/"
