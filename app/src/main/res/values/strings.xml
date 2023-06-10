@@ -27,6 +27,7 @@
     <string name="DeleteCodes">Удаление штрихкодов…</string>
     <string name="countNomen">Остатки номенклатур -</string>
     <string name="add_nomenclature">Add nomenclature</string>
+    <string name="inv_nomenclature">Invent nomenclature</string>
     <string name="save_dokuments">Save dokuments</string>
     <string name="camera">Camera</string>
     <string name="upload_ftp">Upload ftp</string>

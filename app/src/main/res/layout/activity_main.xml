@@ -41,6 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/darker_gray"
+            tools:layout_editor_absoluteX="31dp"
+            tools:layout_editor_absoluteY="-81dp"
             tools:listitem="@layout/doclist_view_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -56,6 +58,19 @@
         android:contentDescription="@string/add_nomenclature"
         android:src="@drawable/ic_add_nomenclature"
         app:backgroundTint="@color/colorPrimaryDark"
+        app:useCompatPadding="true" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/inv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/inv_nomenclature"
+        android:src="@drawable/baseline_add_shopping_cart_24"
+        app:backgroundTint="@color/red2"
         app:useCompatPadding="true" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

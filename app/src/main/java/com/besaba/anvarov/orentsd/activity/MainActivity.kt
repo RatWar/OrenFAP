@@ -86,6 +86,8 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { onDocument() }
         val ftp = findViewById<FloatingActionButton>(R.id.ftp)
         ftp.setOnClickListener { onUploadFTP() }
+        val inv = findViewById<FloatingActionButton>(R.id.inv)
+        inv.setOnClickListener { onInvent() }
         val count = mAllViewModel.countNomen().toString()
         binding.countNomen.text = "номенклатур в остатках - $count"
     }
@@ -145,6 +147,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun onInvent() {
+        val intent = Intent(this@MainActivity, LoadActivity::class.java)
+        startActivity(intent)
+    }
 
     // LeftScan = 27  Scan = 301  RightScan = 80
     // Esc = 111                  Ent = 66
