@@ -39,4 +39,7 @@
     <string name="inv_NameFAP">Наименование ФАПа</string>
     <string name="inv_DocInvent">Документ инвентаризации</string>
     <string name="inv_ReportInv">Отчет инвентаризации</string>
+    <string name="title_activity_fapactivity">FAPActivity</string>
+    <string name="descr_FAP">Ввести цифры (без ведущих 0)\n места деятельности ФАПа</string>
+    <string name="txtFindFAP">Найти ФАП</string>
 </resources>

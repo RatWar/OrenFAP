@@ -28,6 +28,14 @@
         tools:replace="android:allowBackup"
         tools:targetApi="s">
         <activity
+            android:name=".activity.ListFAPActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.FAPActivity"
+            android:exported="false"
+            android:label="@string/title_activity_fapactivity"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".activity.InventActivity"
             android:exported="false" />
         <activity android:name=".activity.CodesActivity" />
