@@ -34,4 +34,9 @@
     <string name="txtLoad">Обмен с ФТП...</string>
     <string name="partNumber">Число</string>
     <string name="numberParts">Ввести число частей</string>
+    <string name="inv_LoadRemains">Загрузить остатки по ФАПу</string>
+    <string name="inv_SaveInvent">Сохранить инвентаризацию на ftp</string>
+    <string name="inv_NameFAP">Наименование ФАПа</string>
+    <string name="inv_DocInvent">Документ инвентаризации</string>
+    <string name="inv_ReportInv">Отчет инвентаризации</string>
 </resources>

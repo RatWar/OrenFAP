@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onInvent() {
-        val intent = Intent(this@MainActivity, LoadActivity::class.java)
+        val intent = Intent(this@MainActivity, InventActivity::class.java)
         startActivity(intent)
     }
 
