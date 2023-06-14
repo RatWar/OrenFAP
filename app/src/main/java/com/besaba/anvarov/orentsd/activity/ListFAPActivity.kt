@@ -26,10 +26,10 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
+@Suppress("DEPRECATION")
 class ListFAPActivity : AppCompatActivity() {
 
     private var h: Handler? = null
-    private var nameFAP = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,15 +38,15 @@ class ListFAPActivity : AppCompatActivity() {
         btnFTP.setOnClickListener { loadListFAP() }
         val tvNameFAP = findViewById<TextView>(R.id.tvNameFAP)
         tvNameFAP.text = ""
-        val edtFAP = findViewById<EditText>(R.id.edtFAP)
-        h = object : Handler() {
+        h = @SuppressLint("HandlerLeak")
+        object : Handler() {
             @SuppressLint("HandlerLeak")
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
-                    0 -> {  // кнопка - надпись
+                    0 -> {  // надпись
                         tvNameFAP.text = msg.obj.toString()
                     }
-                    1 -> {  // сколько загружено
+                    1 -> {  // в случае ошибки поиска
                         tvNameFAP.text = msg.obj.toString()
                     }
                 }
@@ -55,7 +55,12 @@ class ListFAPActivity : AppCompatActivity() {
     }
 
     private fun loadListFAP() {
-        onLoad(438917)
+        val edtFAP = findViewById<EditText>(R.id.edtFAP)
+        val strFAP = edtFAP.text.toString()
+        if (strFAP != "") {
+            val numFAP = strFAP.toInt()
+            onLoad(numFAP)
+        }
     }
 
     private fun onLoad(numFAP: Int) {
@@ -70,9 +75,10 @@ class ListFAPActivity : AppCompatActivity() {
             val nameDBF = "faps.DBF"
             var msg: Message?
             val file = File(path, nameDBF)
-            if (!file.exists()) {
-                file.createNewFile()
+            if (file.exists()) {
+                file.delete()
             }
+            file.createNewFile()
             try {
                 // открытие соединения
                 ftpClient.connect(server, FTP.DEFAULT_PORT)
@@ -132,16 +138,34 @@ class ListFAPActivity : AppCompatActivity() {
                 reader.charactersetName = "866"
                 val counts = reader.recordCount
                 var rowValues: Array<Any?>
+                var numMD: Int
+                var strMD: String
                 for (i in 1..counts) {
                     reader.nextRecord().also { rowValues = it }
-                    if (numFAP == rowValues[0].toString().toInt()) {
-                        nameFAP = rowValues[1].toString()
+                    try {
+                        strMD = rowValues[0].toString().trim()
+                        numMD = strMD.toInt()
+                    } catch (e: Exception) {
+                        numMD = 0
+                    }
+                    if (numFAP == numMD) {
+                        msg = h!!.obtainMessage(
+                            0,
+                            rowValues[1].toString()
+                        )
+                        h!!.sendMessage(msg)
                         break
                     }
                 }
+                msg = h!!.obtainMessage(
+                    0,
+                    "Не найден ФАП по такому коду"
+                )
+                h!!.sendMessage(msg)
+                return@Thread
             } catch (e: DBFException) {
                 msg = h!!.obtainMessage(
-                    1,
+                    0,
                     "Ошибка при работе с dbf"
                 )
                 h!!.sendMessage(msg)
@@ -149,7 +173,7 @@ class ListFAPActivity : AppCompatActivity() {
                 return@Thread
             } catch (e: IOException) {
                 msg = h!!.obtainMessage(
-                    1,
+                    0,
                     "Ошибка при записи остатков"
                 )
                 h!!.sendMessage(msg)
@@ -161,11 +185,6 @@ class ListFAPActivity : AppCompatActivity() {
                 } catch (_: Exception) {
                 }
             }
-            msg = h!!.obtainMessage(
-                1,
-                "загружено файлов - "
-            )
-            h!!.sendMessage(msg)
         }
         t.start()
     }

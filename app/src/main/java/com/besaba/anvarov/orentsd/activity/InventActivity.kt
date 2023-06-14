@@ -1,5 +1,6 @@
 package com.besaba.anvarov.orentsd.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -21,7 +22,8 @@ class InventActivity : AppCompatActivity() {
     }
 
     private fun loadRemains() {
-
+        val intent = Intent(this@InventActivity, ListFAPActivity::class.java)
+        startActivity(intent)
     }
 
     private fun saveInvent() {
