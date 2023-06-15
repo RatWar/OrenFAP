@@ -12,13 +12,13 @@ class RemainsRepository(private val remainsDataDao: RemainsDataDao) {
     }
 
     @WorkerThread
-    suspend fun getNomenByCode(barcode: String): RemainsData? {
-        return remainsDataDao.getNomenByCode(barcode)
+    suspend fun getRemainsByCode(barcode: String): RemainsData? {
+        return remainsDataDao.getRemainsByCode(barcode)
     }
 
     @WorkerThread
-    suspend fun countNomen(): Int {
-        return remainsDataDao.countNomen()
+    suspend fun countRemains(): Int {
+        return remainsDataDao.countRemains()
     }
 
     @WorkerThread
@@ -37,7 +37,7 @@ class RemainsRepository(private val remainsDataDao: RemainsDataDao) {
     }
 
     @WorkerThread
-    suspend fun delNomen() {
-        return remainsDataDao.delNomen()
+    suspend fun delRemains() {
+        return remainsDataDao.delRemains()
     }
 }

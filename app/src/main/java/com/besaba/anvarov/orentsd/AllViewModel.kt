@@ -181,23 +181,23 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // mRemainsRepository
-    fun insertNomenRemains(remainsData: RemainsData) = viewModelScope.launch(Dispatchers.IO) {
+    fun insertRemains(remainsData: RemainsData) = viewModelScope.launch(Dispatchers.IO) {
         mRemainsRepository.insert(remainsData)
     }
 
-    fun insertNomenBlockingRemains(remainsData: RemainsData) {
+    fun insertRemainsBlocking(remainsData: RemainsData) {
         runBlocking { mRemainsRepository.insert(remainsData) }
     }
 
-    fun getNomenByCodeRemains(barcode: String): RemainsData? {
+    fun getRemainsByCode(barcode: String): RemainsData? {
         var res: RemainsData?
-        runBlocking {res = mRemainsRepository.getNomenByCode(barcode) }
+        runBlocking {res = mRemainsRepository.getRemainsByCode(barcode) }
         return res
     }
 
-    fun countNomenRemains(): Int {
+    fun countRemains(): Int {
         var res: Int
-        runBlocking { res = mRemainsRepository.countNomen() }
+        runBlocking { res = mRemainsRepository.countRemains() }
         return res
     }
 
@@ -217,8 +217,8 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mRemainsRepository.updateAvailable(id, available)
     }
 
-    fun delNomenRemains() {
-        runBlocking { mRemainsRepository.delNomen() }
+    fun delRemains() {
+        runBlocking { mRemainsRepository.delRemains() }
     }
 
 }
