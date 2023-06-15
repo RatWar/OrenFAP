@@ -30,6 +30,7 @@ import java.util.*
 import java.util.stream.Collectors
 
 
+@Suppress("DEPRECATION")
 class LoadActivity : AppCompatActivity() {
 
     private var h: Handler? = null

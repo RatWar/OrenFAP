@@ -32,6 +32,7 @@ class ListFAPActivity : AppCompatActivity() {
     private var h: Handler? = null
     private var strFAP = ""
 
+    @SuppressLint("HandlerLeak")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_fapactivity)
@@ -43,9 +44,7 @@ class ListFAPActivity : AppCompatActivity() {
         btnFTPLoad.setOnClickListener { loadRemains() }
         val tvNameFAP = findViewById<TextView>(R.id.tvNameFAP)
         tvNameFAP.text = ""
-        h = @SuppressLint("HandlerLeak")
         object : Handler() {
-            @SuppressLint("HandlerLeak")
             override fun handleMessage(msg: Message) {
                 when (msg.what) {
                     0 -> {  // надпись
