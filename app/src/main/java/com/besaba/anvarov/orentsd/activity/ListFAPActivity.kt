@@ -30,6 +30,7 @@ import java.io.OutputStream
 class ListFAPActivity : AppCompatActivity() {
 
     private var h: Handler? = null
+    private var strFAP = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +65,7 @@ class ListFAPActivity : AppCompatActivity() {
 
     private fun loadListFAP() {
         val edtFAP = findViewById<EditText>(R.id.edtFAP)
-        val strFAP = edtFAP.text.toString()
+        strFAP = edtFAP.text.toString()
         if (strFAP != "") {
             onLoad(strFAP)
         }
