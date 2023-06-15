@@ -11,6 +11,8 @@ abstract class TSDDatabase : RoomDatabase() {
 
     abstract fun scanDataDao(): ScanDataDao
     abstract fun nomenDataDao(): NomenDataDao
+    abstract fun remainsDataDao(): RemainsDataDao
+    abstract fun inventDataDao(): InventDataDao
 
     companion object {
         @Volatile

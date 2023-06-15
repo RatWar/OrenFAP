@@ -13,20 +13,33 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
 
     private val mScanRepository: ScanRepository
     private val mNomenRepository: NomenRepository
+    private val mInventRepository: InventRepository
+    private val mRemainsRepository: RemainsRepository
     var mAllCodes: LiveData<List<CodesData>>
     var mAllScans: LiveData<List<CountData>>
     val mAllDocs: LiveData<List<DocumentData>>
+    var mAllCodesInvent: LiveData<List<CodesData>>
+    var mAllInvent: LiveData<List<CountData>>
+    val mAllDocsInvent: LiveData<List<DocumentData>>
 
     init {
         val scansDao = TSDDatabase.getDatabase(application).scanDataDao()
         val nomenDao = TSDDatabase.getDatabase(application).nomenDataDao()
+        val inventDao = TSDDatabase.getDatabase(application).inventDataDao()
+        val remainsDao = TSDDatabase.getDatabase(application).remainsDataDao()
         mScanRepository = ScanRepository(scansDao)
         mNomenRepository = NomenRepository(nomenDao)
+        mInventRepository = InventRepository(inventDao)
+        mRemainsRepository = RemainsRepository(remainsDao)
         mAllCodes = mScanRepository.getCodes(0, "")
         mAllScans = mScanRepository.getScans(0)
         mAllDocs = mScanRepository.mAllDocs
+        mAllCodesInvent = mInventRepository.getCodes(0, "")
+        mAllInvent = mInventRepository.getScans(0)
+        mAllDocsInvent = mInventRepository.mAllDocs
     }
 
+    // mScanRepository
     fun insertScan(scanData: ScanData) = viewModelScope.launch(Dispatchers.IO) {
         mScanRepository.insert(scanData)
     }
@@ -76,6 +89,7 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
+    // mNomenRepository
     fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {
         mNomenRepository.insert(nomenData)
     }
@@ -114,6 +128,97 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
 
     fun delNomen() {
         runBlocking { mNomenRepository.delNomen() }
+    }
+
+    // mInventRepository
+    fun insertInvent(inventData: InventData) = viewModelScope.launch(Dispatchers.IO) {
+        mInventRepository.insert(inventData)
+    }
+
+    fun deleteBarcodeIdInvent(id: Long) = viewModelScope.launch(Dispatchers.IO) {
+        mInventRepository.deleteBarcodeId(id)
+    }
+
+    fun deleteSGTINInvent(numDoc: Int, sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
+        mInventRepository.deleteSGTIN(numDoc, sgtin)
+    }
+
+    fun deleteCodesInvent(sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
+        mInventRepository.deleteCodes(sgtin)
+    }
+
+    fun deleteDocInvent(numDoc: Int) = viewModelScope.launch(Dispatchers.IO) {
+        mInventRepository.deleteDoc(numDoc)
+    }
+
+    fun getNumberDocumentInvent(): Int {
+        var res: Int
+        runBlocking { res = mInventRepository.getNumberDocument() }
+        return res
+    }
+
+    fun setNumDocAndBarcodeInvent(numDoc: Int, barcode: String){
+        mInventRepository.mNumDoc = numDoc
+        mAllCodesInvent = mInventRepository.getCodes(numDoc, barcode)
+    }
+
+    fun setNumDocInvent(numDoc: Int){
+        mInventRepository.mNumDoc = numDoc
+        mAllInvent = mInventRepository.getScans(numDoc)
+    }
+
+
+    fun getAllInvent(): List<InventData>? {
+        var res: List<InventData>?
+        runBlocking { res = mInventRepository.getAll() }
+        return res
+    }
+
+    fun getSGTINfromDocumentInvent(numDoc: Int): List<String> {
+        var res: List<String>
+        runBlocking { res = mInventRepository.getSGTINfromDocument(numDoc) }
+        return res
+    }
+
+    // mRemainsRepository
+    fun insertNomenRemains(remainsData: RemainsData) = viewModelScope.launch(Dispatchers.IO) {
+        mRemainsRepository.insert(remainsData)
+    }
+
+    fun insertNomenBlockingRemains(remainsData: RemainsData) {
+        runBlocking { mRemainsRepository.insert(remainsData) }
+    }
+
+    fun getNomenByCodeRemains(barcode: String): RemainsData? {
+        var res: RemainsData?
+        runBlocking {res = mRemainsRepository.getNomenByCode(barcode) }
+        return res
+    }
+
+    fun countNomenRemains(): Int {
+        var res: Int
+        runBlocking { res = mRemainsRepository.countNomen() }
+        return res
+    }
+
+    fun countAvailableRemains(barcode: String): Int? {
+        var res: Int?
+        runBlocking { res = mRemainsRepository.countAvailable(barcode) }
+        return res
+    }
+
+    fun countPartRemains(barcode: String): Int? {
+        var res: Int?
+        runBlocking { res = mRemainsRepository.countPart(barcode) }
+        return res
+    }
+
+    fun updateAvailableRemains(id: Long, available: Int) = viewModelScope.launch(Dispatchers.IO) {
+        mRemainsRepository.updateAvailable(id, available)
+    }
+
+    fun delNomenRemains() {
+        runBlocking { mRemainsRepository.delNomen() }
     }
 
 }
