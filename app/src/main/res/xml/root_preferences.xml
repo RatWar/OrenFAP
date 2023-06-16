@@ -26,7 +26,6 @@
         app:title="@string/messages_ftp">
 
         <EditTextPreference
-            android:defaultValue="ftp1.oas-orb.ru"
             android:key="et_preference_server"
             android:selectAllOnFocus="true"
             android:singleLine="true"
