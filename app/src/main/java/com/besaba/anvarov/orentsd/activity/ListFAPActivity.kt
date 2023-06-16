@@ -159,6 +159,7 @@ class ListFAPActivity : AppCompatActivity() {
             // чтение файла
             val reader: DBFReader?
             val fis: InputStream = BufferedInputStream(FileInputStream(file))
+            var flagFind = false
             try {
                 reader = DBFReader(fis)
                 reader.charactersetName = "866"
@@ -169,20 +170,21 @@ class ListFAPActivity : AppCompatActivity() {
                     reader.nextRecord().also { rowValues = it }
                     strMD = rowValues[0].toString().trim()
                     if (numFAP == strMD) {
+                        flagFind = true
                         msg = h!!.obtainMessage(
                             0,
                             rowValues[1].toString()
                         )
                         h!!.sendMessage(msg)
-                        return@Thread
                     }
                 }
-                msg = h!!.obtainMessage(
-                    1,
-                    "Не найден ФАП по такому коду"
-                )
-                h!!.sendMessage(msg)
-                return@Thread
+                if (!flagFind) {
+                    msg = h!!.obtainMessage(
+                        1,
+                        "Не найден ФАП по такому коду"
+                    )
+                    h!!.sendMessage(msg)
+                }
             } catch (e: DBFException) {
                 msg = h!!.obtainMessage(
                     1,
@@ -308,7 +310,6 @@ class ListFAPActivity : AppCompatActivity() {
                     }
                 }
                 file.delete()
-                return@Thread
             } catch (e: DBFException) {
                 msg = h!!.obtainMessage(
                     3,
