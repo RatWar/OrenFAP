@@ -1,10 +1,10 @@
 package com.besaba.anvarov.orentsd.activity
 
-import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.view.View
 import android.widget.Button
@@ -30,14 +30,12 @@ import java.util.*
 import java.util.stream.Collectors
 
 
-@Suppress("DEPRECATION")
 class LoadActivity : AppCompatActivity() {
 
-    private var h: Handler? = null
+    private var h = Handler(Looper.getMainLooper())
     private lateinit var mAllViewModel: AllViewModel
     private lateinit var mCurrentNomen: NomenData
 
-    @SuppressLint("HandlerLeak")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_load)
@@ -45,8 +43,9 @@ class LoadActivity : AppCompatActivity() {
         val tvInfoUpload = findViewById<View>(R.id.tvStatusU) as TextView
         val btLoad = findViewById<View>(R.id.btnLoad) as Button
         btLoad.setOnClickListener { onLoad() }
-        h = object : Handler() {
+        h = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
                 when (msg.what) {
                     0 -> {  // кнопка - надпись
                         btLoad.text = msg.obj.toString()
@@ -86,18 +85,18 @@ class LoadActivity : AppCompatActivity() {
                 val reply = ftpClient.replyCode
                 if (!FTPReply.isPositiveCompletion(reply)) {
                     ftpClient.disconnect()
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         1,
                         "FTP сервер не принимает подключение. Код ответа - $reply"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     return@Thread
                 }
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     0,
                     "Идет обмен..."
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 ftpClient.enterLocalPassiveMode()
 // получаю список файлов
                 val ftpFiles = Arrays.stream(ftpClient.listFiles(
@@ -110,11 +109,11 @@ class LoadActivity : AppCompatActivity() {
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE)
                 ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE)
 // получаю файлы "dbf" и переименовываю их в ".tmp"
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     1,
                     "Получаю файлы остатков"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 countLoad = 0
                 for (i in 0 until ftpFiles.size) {
                     if (ftpFiles[i].substring(ftpFiles[i].length - 3) != "DBF") {
@@ -133,17 +132,17 @@ class LoadActivity : AppCompatActivity() {
                     fos.close()
                 }
                 msg = if (countLoad > 0) {
-                    h!!.obtainMessage(
+                    h.obtainMessage(
                         1,
                         "Загружено файлов - $countLoad"
                     )
                 } else {
-                    h!!.obtainMessage(
+                    h.obtainMessage(
                         1,
                         ""
                     )
                 }
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
 // выгружаю расход в файлы
                 mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
                 onSaveCodesToJSON()
@@ -162,23 +161,23 @@ class LoadActivity : AppCompatActivity() {
                     }
                 }
                 msg = if (countUpload > 0) {
-                    h!!.obtainMessage(
+                    h.obtainMessage(
                         2,
                         "Выгружено файлов - $countUpload"
                     )
                 } else {
-                    h!!.obtainMessage(
+                    h.obtainMessage(
                         2,
                         ""
                     )
                 }
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
             } catch (ex: IOException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     1,
                     "Ошибка при обмене"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 ex.printStackTrace()
                 return@Thread
             }
@@ -188,11 +187,11 @@ class LoadActivity : AppCompatActivity() {
                     ftpClient.disconnect()
                 }
             } catch (ex: IOException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     1,
                     "Ошибка при закрытии соединения"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 ex.printStackTrace()
                 return@Thread
             }
@@ -202,11 +201,11 @@ class LoadActivity : AppCompatActivity() {
             } as Array<File>
             if (filesArray.isNotEmpty()) {
                 mAllViewModel.delNomen()
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     1,
                     "Загружаю остатки в базу"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
             }
             for (fileIn in filesArray) {
                 val reader: DBFReader?
@@ -241,19 +240,19 @@ class LoadActivity : AppCompatActivity() {
                     }
                     fileIn.delete()
                 } catch (e: DBFException) {
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         1,
                         "Ошибка при работе с dbf"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     e.printStackTrace()
                     return@Thread
                 } catch (e: IOException) {
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         1,
                         "Ошибка при записи остатков"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     e.printStackTrace()
                     return@Thread
                 } finally {
@@ -263,16 +262,16 @@ class LoadActivity : AppCompatActivity() {
                     }
                 }
             }
-            msg = h!!.obtainMessage(
+            msg = h.obtainMessage(
                 3,
                 "Обмен завершен!"
             )
-            h!!.sendMessage(msg)
-            msg = h!!.obtainMessage(
+            h.sendMessage(msg)
+            msg = h.obtainMessage(
                 1,
                 "загружено файлов - $countLoad"
             )
-            h!!.sendMessage(msg)
+            h.sendMessage(msg)
         }
         t.start()
     }

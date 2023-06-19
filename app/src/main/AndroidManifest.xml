@@ -6,7 +6,8 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -27,17 +28,6 @@
         tools:ignore="DataExtractionRules"
         tools:replace="android:allowBackup"
         tools:targetApi="s">
-        <activity
-            android:name=".activity.ListFAPActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.FAPActivity"
-            android:exported="false"
-            android:label="@string/title_activity_fapactivity"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".activity.InventActivity"
-            android:exported="false" />
         <activity android:name=".activity.CodesActivity" />
         <activity
             android:name=".activity.DocumentActivity"
@@ -46,6 +36,8 @@
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.BarcodeActivity" />
         <activity android:name=".activity.LoadActivity" />
+        <activity android:name=".activity.InventActivity" />
+        <activity android:name=".activity.ListFAPActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"

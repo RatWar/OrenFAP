@@ -1,15 +1,15 @@
 package com.besaba.anvarov.orentsd.activity
 
-import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.besaba.anvarov.orentsd.AllViewModel
@@ -32,15 +32,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@Suppress("DEPRECATION")
 class ListFAPActivity : AppCompatActivity() {
 
-    private var h: Handler? = null
+    private var h = Handler(Looper.getMainLooper())
     private lateinit var mAllViewModel: AllViewModel
     private lateinit var mCurrentRemains: RemainsData
     private var strFAP = ""
 
-    @SuppressLint("HandlerLeak")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_fapactivity)
@@ -53,22 +51,26 @@ class ListFAPActivity : AppCompatActivity() {
         val tvNameFAP = findViewById<TextView>(R.id.tvNameFAP)
         val tvStatusFAP = findViewById<TextView>(R.id.tvStatusFAP)
         tvNameFAP.text = ""
-        object : Handler() {
+        h = object : Handler(Looper.getMainLooper()) {
             override fun handleMessage(msg: Message) {
+                super.handleMessage(msg)
                 when (msg.what) {
                     0 -> {  // надпись
                         tvNameFAP.text = msg.obj.toString()
                         btnFTPLoad.isEnabled = true
                         btnFTPLoad.isClickable = true
                     }
+
                     1 -> {  // в случае ошибки
                         tvNameFAP.text = msg.obj.toString()
                         btnFTPLoad.isEnabled = false
                         btnFTPLoad.isClickable = false
                     }
+
                     2 -> {  // надпись
                         tvStatusFAP.text = msg.obj.toString()
                     }
+
                     3 -> {  // в случае ошибки
                         tvStatusFAP.text = msg.obj.toString()
                     }
@@ -112,11 +114,11 @@ class ListFAPActivity : AppCompatActivity() {
                 val reply = ftpClient.replyCode
                 if (!FTPReply.isPositiveCompletion(reply)) {
                     ftpClient.disconnect()
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         1,
                         "FTP сервер не принимает подключение. Код ответа - $reply"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     return@Thread
                 }
                 // получение файла
@@ -124,20 +126,20 @@ class ListFAPActivity : AppCompatActivity() {
                 val fos: OutputStream = BufferedOutputStream(FileOutputStream(file))
                 val res = ftpClient.retrieveFile(nameDBF, fos)
                 if (!res) {
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         1,
                         "на FTP сервере нет файла - $nameDBF"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     return@Thread
                 }
                 fos.close()
             } catch (ex: IOException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     1,
                     "Ошибка при обмене"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 ex.printStackTrace()
                 return@Thread
             }
@@ -148,11 +150,11 @@ class ListFAPActivity : AppCompatActivity() {
                     ftpClient.disconnect()
                 }
             } catch (ex: IOException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     1,
                     "Ошибка при закрытии соединения"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 ex.printStackTrace()
                 return@Thread
             }
@@ -171,26 +173,26 @@ class ListFAPActivity : AppCompatActivity() {
                     strMD = rowValues[0].toString().trim()
                     if (numFAP == strMD) {
                         flagFind = true
-                        msg = h!!.obtainMessage(
+                        msg = h.obtainMessage(
                             0,
                             rowValues[1].toString()
                         )
-                        h!!.sendMessage(msg)
+                        h.sendMessage(msg)
                     }
                 }
                 if (!flagFind) {
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         1,
                         "Не найден ФАП по такому коду"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                 }
             } catch (e: DBFException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     1,
                     "Ошибка при работе с dbf"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 e.printStackTrace()
                 return@Thread
             } finally {
@@ -225,11 +227,11 @@ class ListFAPActivity : AppCompatActivity() {
                 val reply = ftpClient.replyCode
                 if (!FTPReply.isPositiveCompletion(reply)) {
                     ftpClient.disconnect()
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         3,
                         "FTP сервер не принимает подключение. Код ответа - $reply"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     return@Thread
                 }
                 // получение файла
@@ -237,20 +239,20 @@ class ListFAPActivity : AppCompatActivity() {
                 val fos: OutputStream = BufferedOutputStream(FileOutputStream(file))
                 val res = ftpClient.retrieveFile(numFAP, fos)
                 if (!res) {
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         3,
                         "на FTP сервере нет файла - $numFAP"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     return@Thread
                 }
                 fos.close()
             } catch (ex: IOException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     3,
                     "Ошибка при обмене"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 ex.printStackTrace()
                 return@Thread
             }
@@ -261,11 +263,11 @@ class ListFAPActivity : AppCompatActivity() {
                     ftpClient.disconnect()
                 }
             } catch (ex: IOException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     3,
                     "Ошибка при закрытии соединения"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 ex.printStackTrace()
                 return@Thread
             }
@@ -279,11 +281,11 @@ class ListFAPActivity : AppCompatActivity() {
                 val counts = reader.recordCount
                 if (counts > 0) {
                     mAllViewModel.delRemains()
-                    msg = h!!.obtainMessage(
+                    msg = h.obtainMessage(
                         3,
                         "Загружаю остатки в базу"
                     )
-                    h!!.sendMessage(msg)
+                    h.sendMessage(msg)
                     var rowValues: Array<Any?>
                     val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
                     for (i in 1..counts) {
@@ -311,11 +313,11 @@ class ListFAPActivity : AppCompatActivity() {
                 }
                 file.delete()
             } catch (e: DBFException) {
-                msg = h!!.obtainMessage(
+                msg = h.obtainMessage(
                     3,
                     "Ошибка при работе с dbf"
                 )
-                h!!.sendMessage(msg)
+                h.sendMessage(msg)
                 e.printStackTrace()
                 return@Thread
             } finally {
