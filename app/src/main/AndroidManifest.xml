@@ -6,7 +6,8 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -31,6 +32,9 @@
         <activity android:name=".activity.CodesActivity" />
         <activity
             android:name=".activity.DocumentActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.DocumentInventActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.AboutActivity" />

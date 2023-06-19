@@ -1,6 +1,7 @@
 package com.besaba.anvarov.orentsd.activity
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -90,17 +91,18 @@ class InventActivity : AppCompatActivity() {
         btnSaveFTP.isClickable = state
     }
 
-    private fun saveInvent() {
-
-    }
-
     private fun openDoc() {
-//        val intent = Intent(this@InventActivity, ListFAPActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this@InventActivity, DocumentInventActivity::class.java)
+        startActivity(intent)
     }
 
     private fun openReport() {
 //        val intent = Intent(this@InventActivity, ListFAPActivity::class.java)
 //        startActivity(intent)
     }
+
+    private fun saveInvent() {
+
+    }
+
 }
