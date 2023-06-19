@@ -1,11 +1,14 @@
 package com.besaba.anvarov.orentsd.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -38,6 +41,8 @@ class ListFAPActivity : AppCompatActivity() {
     private lateinit var mAllViewModel: AllViewModel
     private lateinit var mCurrentRemains: RemainsData
     private var strFAP = ""
+    private var nameFAP = ""
+    private val tag = "myLogs"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +64,7 @@ class ListFAPActivity : AppCompatActivity() {
                         tvNameFAP.text = msg.obj.toString()
                         btnFTPLoad.isEnabled = true
                         btnFTPLoad.isClickable = true
+                        nameFAP = msg.obj.toString()
                     }
 
                     1 -> {  // в случае ошибки
@@ -73,6 +79,13 @@ class ListFAPActivity : AppCompatActivity() {
 
                     3 -> {  // в случае ошибки
                         tvStatusFAP.text = msg.obj.toString()
+                    }
+                    4 -> {
+                        val intentAnswer = Intent()
+                        Log.d(tag, nameFAP)
+                        intentAnswer.putExtra("nameFAP", nameFAP)
+                        setResult(Activity.RESULT_OK, intentAnswer)
+                        finish()
                     }
                 }
             }
@@ -169,6 +182,7 @@ class ListFAPActivity : AppCompatActivity() {
                 var rowValues: Array<Any?>
                 var strMD: String
                 for (i in 1..counts) {
+//                    Log.d(tag, "Номер строки = $i")
                     reader.nextRecord().also { rowValues = it }
                     strMD = rowValues[0].toString().trim()
                     if (numFAP == strMD) {
@@ -178,6 +192,7 @@ class ListFAPActivity : AppCompatActivity() {
                             rowValues[1].toString()
                         )
                         h.sendMessage(msg)
+                        break
                     }
                 }
                 if (!flagFind) {
@@ -289,6 +304,7 @@ class ListFAPActivity : AppCompatActivity() {
                     var rowValues: Array<Any?>
                     val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
                     for (i in 1..counts) {
+//                        Log.d(tag, "Номер строки = $i")
                         reader.nextRecord().also { rowValues = it }
                         val available: Int = if ((rowValues[3] as Double).toInt() == 0) {
                             1
@@ -312,6 +328,16 @@ class ListFAPActivity : AppCompatActivity() {
                     }
                 }
                 file.delete()
+                msg = h.obtainMessage(
+                    3,
+                    ""
+                )
+                h.sendMessage(msg)
+                msg = h.obtainMessage(
+                    4,
+                    ""
+                )
+                h.sendMessage(msg)
             } catch (e: DBFException) {
                 msg = h.obtainMessage(
                     3,

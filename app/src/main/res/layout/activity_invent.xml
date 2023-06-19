@@ -11,7 +11,7 @@
         android:id="@+id/btnRemains"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/txtFindFAP"
+        android:text="@string/txtFindFAPandRemains"
         app:layout_constraintBottom_toTopOf="@+id/tvName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,37 +21,37 @@
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/inv_NameFAP"
-        android:textSize="24sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/green2"
+        android:text=""
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/tvDoc"
-        app:layout_constraintTop_toBottomOf="@id/btnRemains"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnRemains" />
 
-    <TextView
+    <Button
         android:id="@+id/tvDoc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/inv_DocInvent"
-        android:textSize="24sp"
-        android:background="@color/yellow2"
         app:layout_constraintBottom_toTopOf="@+id/tvReport"
-        app:layout_constraintTop_toBottomOf="@id/tvName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvName" />
 
-    <TextView
+    <Button
         android:id="@+id/tvReport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/inv_ReportInv"
-        android:textSize="24sp"
-        android:background="@color/yellow2"
         app:layout_constraintBottom_toTopOf="@+id/btnSaveFTP"
-        app:layout_constraintTop_toBottomOf="@id/tvDoc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDoc" />
 
     <Button
         android:id="@+id/btnSaveFTP"

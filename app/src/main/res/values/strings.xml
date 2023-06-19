@@ -42,4 +42,5 @@
     <string name="title_activity_fapactivity">FAPActivity</string>
     <string name="descr_FAP">Ввести цифры (без ведущих 0)\n места деятельности ФАПа</string>
     <string name="txtFindFAP">Найти ФАП</string>
+    <string name="txtFindFAPandRemains">Найти ФАП и загрузить остатки</string>
 </resources>
