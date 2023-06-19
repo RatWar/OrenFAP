@@ -28,30 +28,30 @@
         android:background="@color/green2"
         android:text=""
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvDoc"
+        app:layout_constraintBottom_toTopOf="@+id/btnDoc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnRemains" />
 
     <Button
-        android:id="@+id/tvDoc"
+        android:id="@+id/btnDoc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/inv_DocInvent"
-        app:layout_constraintBottom_toTopOf="@+id/tvReport"
+        app:layout_constraintBottom_toTopOf="@+id/btnReport"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvName" />
 
     <Button
-        android:id="@+id/tvReport"
+        android:id="@+id/btnReport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/inv_ReportInv"
         app:layout_constraintBottom_toTopOf="@+id/btnSaveFTP"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDoc" />
+        app:layout_constraintTop_toBottomOf="@id/btnDoc" />
 
     <Button
         android:id="@+id/btnSaveFTP"
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:text="@string/inv_SaveInvent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvReport"
+        app:layout_constraintTop_toBottomOf="@id/btnReport"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

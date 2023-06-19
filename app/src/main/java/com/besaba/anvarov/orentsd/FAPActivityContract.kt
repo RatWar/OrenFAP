@@ -13,7 +13,7 @@ class FAPActivityContract: ActivityResultContract<Int, String>() {
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): String {
-        if (resultCode != Activity.RESULT_OK) return ""
+        if (resultCode != Activity.RESULT_OK) return "Back"
         return intent?.getStringExtra("nameFAP").toString()
     }
 }
