@@ -93,6 +93,7 @@ class InventActivity : AppCompatActivity() {
 
     private fun openDoc() {
         val intent = Intent(this@InventActivity, DocumentInventActivity::class.java)
+        intent.putExtra("documentNumber", 1)
         startActivity(intent)
     }
 

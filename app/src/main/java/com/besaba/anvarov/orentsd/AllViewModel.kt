@@ -19,7 +19,7 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
     var mAllScans: LiveData<List<CountData>>
     val mAllDocs: LiveData<List<DocumentData>>
     var mAllCodesInvent: LiveData<List<CodesData>>
-    var mAllInvent: LiveData<List<CountData>>
+    var mAllScansInvent: LiveData<List<CountData>>
     val mAllDocsInvent: LiveData<List<DocumentData>>
 
     init {
@@ -35,7 +35,7 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mAllScans = mScanRepository.getScans(0)
         mAllDocs = mScanRepository.mAllDocs
         mAllCodesInvent = mInventRepository.getCodes(0, "")
-        mAllInvent = mInventRepository.getScans(0)
+        mAllScansInvent = mInventRepository.getScans(0)
         mAllDocsInvent = mInventRepository.mAllDocs
     }
 
@@ -131,7 +131,7 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // mInventRepository
-    fun insertInvent(inventData: InventData) = viewModelScope.launch(Dispatchers.IO) {
+    fun insertScanInvent(inventData: InventData) = viewModelScope.launch(Dispatchers.IO) {
         mInventRepository.insert(inventData)
     }
 
@@ -164,7 +164,7 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setNumDocInvent(numDoc: Int){
         mInventRepository.mNumDoc = numDoc
-        mAllInvent = mInventRepository.getScans(numDoc)
+        mAllScansInvent = mInventRepository.getScans(numDoc)
     }
 
 

@@ -24,7 +24,7 @@ import com.besaba.anvarov.orentsd.ScanListAdapter
 import com.besaba.anvarov.orentsd.databinding.ActivityDocumentBinding
 import com.besaba.anvarov.orentsd.extensions.toast
 import com.besaba.anvarov.orentsd.room.CountData
-import com.besaba.anvarov.orentsd.room.ScanData
+import com.besaba.anvarov.orentsd.room.InventData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -36,7 +36,7 @@ class DocumentInventActivity : AppCompatActivity() {
     private var fCamera: String? = ""
     private var fScan: String? = ""
     private var mDocumentNumber: Int = 0
-    private lateinit var mCurrentScan: ScanData
+    private lateinit var mCurrentScanInvent: InventData
     private var keycode: Int = 0
     private val tableScan = mutableListOf<String>()
     private lateinit var binding: ActivityDocumentBinding
@@ -71,9 +71,9 @@ class DocumentInventActivity : AppCompatActivity() {
         val onScanClickListener = object : ScanListAdapter.OnScanClickListener {
             override fun onScanClick(scan: CountData, del: Boolean) {
                 if (del) {
-                    mAllViewModel.deleteBarcodeId(scan.id)
+                    mAllViewModel.deleteBarcodeIdInvent(scan.id)
                     tableScan.clear()
-                    tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
+                    tableScan.addAll(mAllViewModel.getSGTINfromDocumentInvent(mDocumentNumber))
                     setLayoutCount()
                 }
             }
@@ -87,12 +87,12 @@ class DocumentInventActivity : AppCompatActivity() {
         val intent = intent
         mDocumentNumber = intent.getIntExtra("documentNumber", 0)
         mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
-        mAllViewModel.setNumDoc(mDocumentNumber)
-        mAllViewModel.mAllScans.observe(this) { scans ->
+        mAllViewModel.setNumDocInvent(mDocumentNumber)
+        mAllViewModel.mAllScansInvent.observe(this) { scans ->
             scans?.let { scanAdapter.setScans(it) }
         }
         tableScan.clear()
-        tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
+        tableScan.addAll(mAllViewModel.getSGTINfromDocumentInvent(mDocumentNumber))
         setLayoutCount()
     }
 
@@ -108,7 +108,7 @@ class DocumentInventActivity : AppCompatActivity() {
             registerReceiver(broadCastReceiver, filter)
         }
         tableScan.clear()
-        tableScan.addAll(mAllViewModel.getSGTINfromDocument(mDocumentNumber))
+        tableScan.addAll(mAllViewModel.getSGTINfromDocumentInvent(mDocumentNumber))
         setLayoutCount()
     }
 
@@ -171,10 +171,10 @@ class DocumentInventActivity : AppCompatActivity() {
             toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
         }
         tableScan.add(mSGTIN)
-        val mCurrentNom = mAllViewModel.getNomenByCode(mSGTIN.padEnd(31))
+        val mCurrentNom = mAllViewModel.getRemainsByCode(mSGTIN.padEnd(31))
         val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
         if (mCurrentNom != null) {
-            mCurrentScan = ScanData(
+            mCurrentScanInvent = InventData(
                 df.format(Date()),
                 mDocumentNumber,
                 mCurrentNom.barcode.trim(),
@@ -185,7 +185,7 @@ class DocumentInventActivity : AppCompatActivity() {
                 mCurrentNom.id
             )
         }
-        mAllViewModel.insertScan(mCurrentScan)
+        mAllViewModel.insertScanInvent(mCurrentScanInvent)
         setLayoutCount()
     }
 
@@ -243,7 +243,7 @@ class DocumentInventActivity : AppCompatActivity() {
 
     // проверка скана в остатках
     private fun checkInNomen(scan: String): Int{
-        val res = mAllViewModel.countAvailable(scan.padEnd(31))
+        val res = mAllViewModel.countAvailableRemains(scan.padEnd(31))
         return if ((res == null) || (res == 0)) {
             0
         } else res
@@ -251,7 +251,7 @@ class DocumentInventActivity : AppCompatActivity() {
 
     // сколько всего частей в остатках
     private fun checkPartNomen(scan: String): Int{
-        val res = mAllViewModel.countPart(scan.padEnd(31))
+        val res = mAllViewModel.countPartRemains(scan.padEnd(31))
         return if ((res == null) || (res == 0)) {
             0
         } else res
