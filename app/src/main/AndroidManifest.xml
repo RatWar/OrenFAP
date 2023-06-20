@@ -29,6 +29,9 @@
 		tools:ignore="DataExtractionRules"
 		tools:replace="android:allowBackup"
 		tools:targetApi="s">
+		<activity
+			android:name=".activity.ReportActivity"
+			android:exported="false" />
 		<activity android:name=".activity.CodesActivity" />
 		<activity
 			android:name=".activity.DocumentActivity"

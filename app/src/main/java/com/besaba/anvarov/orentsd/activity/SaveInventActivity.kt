@@ -68,9 +68,8 @@ class SaveInventActivity : AppCompatActivity() {
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
-            val user = prefs.getString("et_preference_login", "").toString()
-            val pass = prefs.getString("et_preference_password", "").toString()
-            val outputDir = prefs.getString("et_preference_output", "").toString()
+            val user = "faps"
+            val pass = "Tw789QwZ"
             var msg: Message?
             var countUpload: Int
             try {
@@ -102,7 +101,7 @@ class SaveInventActivity : AppCompatActivity() {
                 for (fileIn in filesArray) {
                     val fi = fileIn.name
                     val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
-                    val res = ftpClient.storeFile(outputDir + fi, fis)
+                    val res = ftpClient.storeFile(fi, fis)
                     if (res) {
                         countUpload += 1
                         fileIn.delete()
