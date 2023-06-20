@@ -29,9 +29,6 @@
 		tools:ignore="DataExtractionRules"
 		tools:replace="android:allowBackup"
 		tools:targetApi="s">
-		<activity
-			android:name=".activity.SaveInventActivity"
-			android:exported="false" />
 		<activity android:name=".activity.CodesActivity" />
 		<activity
 			android:name=".activity.DocumentActivity"
@@ -43,6 +40,7 @@
 		<activity android:name=".activity.AboutActivity" />
 		<activity android:name=".activity.BarcodeActivity" />
 		<activity android:name=".activity.LoadActivity" />
+		<activity android:name=".activity.SaveInventActivity" />
 		<activity android:name=".activity.InventActivity" />
 		<activity android:name=".activity.ListFAPActivity" />
 		<activity
