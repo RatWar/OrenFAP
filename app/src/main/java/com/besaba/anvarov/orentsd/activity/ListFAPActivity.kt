@@ -296,6 +296,7 @@ class ListFAPActivity : AppCompatActivity() {
                 val counts = reader.recordCount
                 if (counts > 0) {
                     mAllViewModel.delRemains()
+                    mAllViewModel.deleteDocInvent(1)
                     msg = h.obtainMessage(
                         3,
                         "Загружаю остатки в базу"
@@ -316,7 +317,7 @@ class ListFAPActivity : AppCompatActivity() {
                             rowValues[0].toString().take(13)
                         mCurrentRemains = RemainsData(
                             df.format(Date()),
-                            file.toString(),
+                            file.name.toString(),
                             rowValues[0].toString(),
                             sgtin,
                             rowValues[1].toString(),

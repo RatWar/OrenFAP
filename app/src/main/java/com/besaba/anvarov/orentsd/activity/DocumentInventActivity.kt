@@ -124,16 +124,31 @@ class DocumentInventActivity : AppCompatActivity() {
         getBarcode.launch(fCamera!!.toInt())
     }
 
-    private fun onScannerResult(codes: Array<String>?){
+    private fun onScannerResult(codes: Array<String>?) {
         if (codes == null) return
         mSGTIN = codes[1]
         if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
             mSGTIN = mSGTIN.substring(1)
         }
+        val barcode = mSGTIN
         mSGTIN = mSGTIN.take(31)
         partAvailable = checkInNomen(mSGTIN)
         if (partAvailable == 0) {
-            toast("Данной номенклатуры нет на остатках")
+//            toast("Данной номенклатуры нет на остатках")
+            tableScan.add(mSGTIN)
+            val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
+            mCurrentScanInvent = InventData(
+                df.format(Date()),
+                mDocumentNumber,
+                barcode.trim(),
+                mSGTIN,
+                barcode,
+                0.00,
+                1,
+                0
+            )
+            mAllViewModel.insertScanInvent(mCurrentScanInvent)
+            setLayoutCount()
         } else {
             if (partAvailable > 1) {
                 partTotal = checkPartNomen(mSGTIN)
@@ -184,9 +199,9 @@ class DocumentInventActivity : AppCompatActivity() {
                 partScan,
                 mCurrentNom.id
             )
+            mAllViewModel.insertScanInvent(mCurrentScanInvent)
+            setLayoutCount()
         }
-        mAllViewModel.insertScanInvent(mCurrentScanInvent)
-        setLayoutCount()
     }
 
     private fun setLayoutCount() {

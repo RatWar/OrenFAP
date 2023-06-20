@@ -23,6 +23,9 @@ interface RemainsDataDao {
     @Query("SELECT Part from RemainsData where SGTIN = :barcode")
     suspend fun countPart(barcode: String): Int?
 
+    @Query("SELECT FileName from RemainsData limit 1")
+    suspend fun nameFileRemains(): String
+
     @Query("UPDATE RemainsData set available = available + :available where id = :id")
     suspend fun updateAvailable(id: Long, available: Int)
 

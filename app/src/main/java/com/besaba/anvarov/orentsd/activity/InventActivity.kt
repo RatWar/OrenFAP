@@ -103,7 +103,8 @@ class InventActivity : AppCompatActivity() {
     }
 
     private fun saveInvent() {
-
+        val intent = Intent(this@InventActivity, SaveInventActivity::class.java)
+        startActivity(intent)
     }
 
 }

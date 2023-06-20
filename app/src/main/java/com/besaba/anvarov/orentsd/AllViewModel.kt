@@ -213,6 +213,12 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
+    fun nameFileRemains(): String {
+        var res: String
+        runBlocking { res = mRemainsRepository.nameFileRemains() }
+        return res
+    }
+
     fun updateAvailableRemains(id: Long, available: Int) = viewModelScope.launch(Dispatchers.IO) {
         mRemainsRepository.updateAvailable(id, available)
     }

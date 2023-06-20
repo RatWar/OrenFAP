@@ -32,6 +32,11 @@ class RemainsRepository(private val remainsDataDao: RemainsDataDao) {
     }
 
     @WorkerThread
+    suspend fun nameFileRemains(): String {
+        return remainsDataDao.nameFileRemains()
+    }
+
+    @WorkerThread
     suspend fun updateAvailable(id: Long, available: Int) {
         return remainsDataDao.updateAvailable(id, available)
     }
