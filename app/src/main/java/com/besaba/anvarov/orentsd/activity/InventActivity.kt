@@ -98,8 +98,8 @@ class InventActivity : AppCompatActivity() {
     }
 
     private fun openReport() {
-//        val intent = Intent(this@InventActivity, ListFAPActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this@InventActivity, ReportActivity::class.java)
+        startActivity(intent)
     }
 
     private fun saveInvent() {

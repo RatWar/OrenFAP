@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,9 +41,11 @@ class DocumentInventActivity : AppCompatActivity() {
     private var keycode: Int = 0
     private val tableScan = mutableListOf<String>()
     private lateinit var binding: ActivityDocumentBinding
-    private var partScan: Int = 0
-    private var partAvailable: Int = 0
+    private var partScan: Int = 0  // кол-во частей
+    private var fullScan: Int = 0  // кол-во целых уп.
+    private var partAvailable: Int = 0  // доступно частей
     private var partTotal: Int = 0
+    private var countPart: Int = 0  // делитель
 
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
@@ -120,6 +123,29 @@ class DocumentInventActivity : AppCompatActivity() {
         super.onPause()
     }
 
+    // обработка результата сканирования Atol
+    private fun onScan(intent: Intent?) {
+        intent?.getStringExtra("EXTRA_BARCODE_DECODING_SYMBOLE").toString() // "Data Matrix"
+        mSGTIN = intent?.getStringExtra("EXTRA_BARCODE_DECODING_DATA").toString()
+        if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
+            mSGTIN = mSGTIN.substring(1)
+        }
+        mSGTIN = mSGTIN.take(31)
+        partAvailable = checkInNomen(mSGTIN)
+        if (partAvailable == 0) {
+            toast("Данной номенклатуры нет на остатках")
+        } else {
+            if (partAvailable > 1) {
+                partTotal = checkPartNomen(mSGTIN)
+                queryPart(true, true)
+            } else {
+                partScan = 1
+                handlerBarcode()
+            }
+        }
+    }
+
+    // запуск сканирования телефоном
     private fun onScanner() {
         getBarcode.launch(fCamera!!.toInt())
     }
@@ -132,9 +158,22 @@ class DocumentInventActivity : AppCompatActivity() {
         }
         val barcode = mSGTIN
         mSGTIN = mSGTIN.take(31)
-        partAvailable = checkInNomen(mSGTIN)
-        if (partAvailable == 0) {
-//            toast("Данной номенклатуры нет на остатках")
+        fullScan = 0
+        partScan = 0
+        if (isKnownNomen(mSGTIN)) {              // есть в остатках
+            partAvailable = checkInNomen(mSGTIN) // число доступных частей
+            countPart = checkPartNomen(mSGTIN)   // делитель товара
+            if (codes[0] == "EAN_13") {          // всегда запрашиваю кол-во для EAN_13
+                queryPart(true, (countPart > 0))  // целые нужны, части определить
+            } else {
+                if (countPart > 0) {             // QR может делиться
+                    queryPart(false, true)  // целые не нужны, только части
+                } else {                         // QR кол-во = 1
+                    partScan = 1
+                    handlerBarcode()
+                }
+            }
+        } else {                               // нет на остатках
             tableScan.add(mSGTIN)
             val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
             mCurrentScanInvent = InventData(
@@ -149,59 +188,107 @@ class DocumentInventActivity : AppCompatActivity() {
             )
             mAllViewModel.insertScanInvent(mCurrentScanInvent)
             setLayoutCount()
-        } else {
-            if (partAvailable > 1) {
-                partTotal = checkPartNomen(mSGTIN)
-                queryPart()
-            } else {
-                partScan = 1
-                handlerBarcode()
-            }
-        }
-    }
-
-    private fun onScan(intent: Intent?) {
-        intent?.getStringExtra("EXTRA_BARCODE_DECODING_SYMBOLE").toString() // "Data Matrix"
-        mSGTIN = intent?.getStringExtra("EXTRA_BARCODE_DECODING_DATA").toString()
-        if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
-            mSGTIN = mSGTIN.substring(1)
-        }
-        mSGTIN = mSGTIN.take(31)
-        partAvailable = checkInNomen(mSGTIN)
-        if (partAvailable == 0) {
-            toast("Данной номенклатуры нет на остатках")
-        } else {
-            if (partAvailable > 1) {
-                partTotal = checkPartNomen(mSGTIN)
-                queryPart()
-            } else {
-                partScan = 1
-                handlerBarcode()
-            }
         }
     }
 
     private fun handlerBarcode() {
-        if (partAvailable - partScan < 0) {
-            toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
-        }
-        tableScan.add(mSGTIN)
         val mCurrentNom = mAllViewModel.getRemainsByCode(mSGTIN.padEnd(31))
         val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
-        if (mCurrentNom != null) {
-            mCurrentScanInvent = InventData(
-                df.format(Date()),
-                mDocumentNumber,
-                mCurrentNom.barcode.trim(),
-                mSGTIN,
-                mCurrentNom.name,
-                mCurrentNom.price,
-                partScan,
-                mCurrentNom.id
-            )
+        while(fullScan > 0){
+            tableScan.add(mSGTIN)
+            if (mCurrentNom != null) {
+                mCurrentScanInvent = InventData(
+                    df.format(Date()),
+                    mDocumentNumber,
+                    mCurrentNom.barcode.trim(),
+                    mSGTIN,
+                    mCurrentNom.name,
+                    mCurrentNom.price,
+                    countPart,
+                    mCurrentNom.id
+                )
+            }
+            mAllViewModel.insertScanInvent(mCurrentScanInvent)
+            setLayoutCount()
+            fullScan--
+        }
+        if (partScan > 0) {
+            tableScan.add(mSGTIN)
+            if (mCurrentNom != null) {
+                mCurrentScanInvent = InventData(
+                    df.format(Date()),
+                    mDocumentNumber,
+                    mCurrentNom.barcode.trim(),
+                    mSGTIN,
+                    mCurrentNom.name,
+                    mCurrentNom.price,
+                    partScan,
+                    mCurrentNom.id
+                )
+            }
             mAllViewModel.insertScanInvent(mCurrentScanInvent)
             setLayoutCount()
         }
+    }
+
+    // проверка скана в остатках
+    private fun checkInNomen(scan: String): Int{
+        val res = mAllViewModel.countAvailableRemains(scan.padEnd(31))
+        return if ((res == null) || (res == 0)) {
+            0
+        } else res
+    }
+
+    // сколько всего частей в остатках
+    private fun checkPartNomen(scan: String): Int{
+        val res = mAllViewModel.countPartRemains(scan.padEnd(31))
+        return if ((res == null) || (res == 0)) {
+            0
+        } else res
+    }
+
+    private fun isKnownNomen(scan: String): Boolean{
+        val res = mAllViewModel.getRemainsByCode(scan.padEnd(31))
+        return res != null
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun queryPart(isFull: Boolean, isPart: Boolean) {
+        val li = LayoutInflater.from(this)
+        val partsView: View = li.inflate(R.layout.query_part, null)
+        val mDialogBuilder = AlertDialog.Builder(this)
+        mDialogBuilder.setView(partsView)
+        val avPart = partsView.findViewById<View>(R.id.available_part) as TextView
+        val avFull = partsView.findViewById<View>(R.id.available_full) as TextView
+        val inpPart = partsView.findViewById<View>(R.id.input_part) as EditText
+        val inpFull = partsView.findViewById<View>(R.id.input_full) as EditText
+        avFull.isVisible = isFull
+        inpFull.isVisible = isFull
+        avPart.isVisible = isPart
+        inpPart.isVisible = isPart
+        avPart.text = "Количество частей из $countPart"
+        mDialogBuilder
+            .setCancelable(false)
+            .setPositiveButton("OK") { _, _ ->
+                if (isFull) {
+                    val memFullScan = inpFull.text.toString()
+                    if (memFullScan != "") {
+                        fullScan = memFullScan.toInt()
+                    }
+                }
+                if (isPart) {
+                    val memPartScan = inpPart.text.toString()
+                    if (memPartScan != "") {
+                        partScan = memPartScan.toInt()
+                    }
+                }
+                handlerBarcode()
+            }
+            .setNegativeButton(
+                "Отмена"
+            ) { dialogInterface, _ -> dialogInterface.cancel() }
+        val alertDialog: AlertDialog = mDialogBuilder.create()
+        alertDialog.show()
     }
 
     private fun setLayoutCount() {
@@ -254,47 +341,6 @@ class DocumentInventActivity : AppCompatActivity() {
         val intent = Intent()
         intent.action = actionCloseScan
         sendBroadcast(intent)
-    }
-
-    // проверка скана в остатках
-    private fun checkInNomen(scan: String): Int{
-        val res = mAllViewModel.countAvailableRemains(scan.padEnd(31))
-        return if ((res == null) || (res == 0)) {
-            0
-        } else res
-    }
-
-    // сколько всего частей в остатках
-    private fun checkPartNomen(scan: String): Int{
-        val res = mAllViewModel.countPartRemains(scan.padEnd(31))
-        return if ((res == null) || (res == 0)) {
-            0
-        } else res
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun queryPart() {
-        val li = LayoutInflater.from(this)
-        val partsView: View = li.inflate(R.layout.query_part, null)
-        val mDialogBuilder = AlertDialog.Builder(this)
-        mDialogBuilder.setView(partsView)
-        val userInput = partsView.findViewById<View>(R.id.input_part) as EditText
-        val avPart = partsView.findViewById<View>(R.id.available_part) as TextView
-        avPart.text = "Доступно частей - $partAvailable из $partTotal"
-        mDialogBuilder
-            .setCancelable(false)
-            .setPositiveButton("OK") { _, _ ->
-                val memPartScan = userInput.text.toString()
-                if (memPartScan != "") {
-                    partScan = memPartScan.toInt()
-                    handlerBarcode()
-                }
-            }
-            .setNegativeButton(
-                "Отмена"
-            ) { dialogInterface, _ -> dialogInterface.cancel() }
-        val alertDialog: AlertDialog = mDialogBuilder.create()
-        alertDialog.show()
     }
 
 }

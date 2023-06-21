@@ -34,6 +34,7 @@ import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class ListFAPActivity : AppCompatActivity() {
 
@@ -303,18 +304,32 @@ class ListFAPActivity : AppCompatActivity() {
                     )
                     h.sendMessage(msg)
                     var rowValues: Array<Any?>
+                    var ean13: Boolean
+                    var sgtin: String
                     val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
                     for (i in 1..counts) {
 //                        Log.d(tag, "Номер строки = $i")
                         reader.nextRecord().also { rowValues = it }
-                        val available: Int = if ((rowValues[3] as Double).toInt() == 0) {
-                            1
-                        } else
-                            (rowValues[3] as Double).toInt()
-                        val sgtin: String = if (rowValues[0].toString().length > 31) {
-                            rowValues[0].toString().take(31)
-                        } else
-                            rowValues[0].toString().take(13)
+                        if (rowValues[0].toString().length > 31) {
+                            sgtin = rowValues[0].toString().take(31)
+                            ean13 = false
+                        } else {
+                            sgtin = rowValues[0].toString().take(13)
+                            ean13 = true
+                        }
+                        val available = if (ean13) {
+                            if ((rowValues[3] as Double).toInt() == 0) {
+                                (rowValues[4] as Double).toInt() // ean13 код один - для множества упаковок
+                            } else {
+                                ((rowValues[3] as Double) * (rowValues[4] as Double)).roundToInt()
+                            }
+                        } else {
+                            if ((rowValues[3] as Double).toInt() == 0) {
+                                1  // qr код всегда один - для одной упаковки
+                            } else {
+                                ((rowValues[3] as Double) * (rowValues[4] as Double)).roundToInt()
+                            }
+                        }
                         mCurrentRemains = RemainsData(
                             df.format(Date()),
                             file.name.toString(),

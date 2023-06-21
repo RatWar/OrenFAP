@@ -31,4 +31,7 @@ interface RemainsDataDao {
 
     @Query("DELETE from RemainsData")
     suspend fun delRemains()
+
+    @Query("SELECT ROUND(SUM(CASE WHEN Part = 0 THEN Available * Price ELSE (Available / Part) * Price END), 2) AS S FROM RemainsData")
+    suspend fun sumRemains(): Double
 }
