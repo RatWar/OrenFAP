@@ -148,10 +148,12 @@ class DocumentActivity : AppCompatActivity() {
     private fun onScannerResult(codes: Array<String>?){
         if (codes == null) return
         mSGTIN = codes[1]
-        if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
-            mSGTIN = mSGTIN.substring(1)
+        if (codes[0] == "DATA_MATRIX") {
+            if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
+                mSGTIN = mSGTIN.substring(1)
+            }
+            mSGTIN = mSGTIN.filterNot { it == '\u001D'}
         }
-        mSGTIN = mSGTIN.take(31)
         partAvailable = checkInNomen(mSGTIN)
         if (partAvailable == 0) {
             soundPlay()
@@ -195,7 +197,7 @@ class DocumentActivity : AppCompatActivity() {
             toast("Данной номенклатуры нехватает на остатках, в остатке $partAvailable частей")
         }
         tableScan.add(mSGTIN)
-        val mCurrentNom = mAllViewModel.getNomenByCode(mSGTIN.padEnd(31))
+        val mCurrentNom = mAllViewModel.getNomenByCode(mSGTIN)
         val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
         if (mCurrentNom != null) {
             mCurrentScan = ScanData(
@@ -273,7 +275,7 @@ class DocumentActivity : AppCompatActivity() {
 
     // проверка скана в остатках
     private fun checkInNomen(scan: String): Int{
-        val res = mAllViewModel.countAvailable(scan.padEnd(31))
+        val res = mAllViewModel.countAvailable(scan)
         return if ((res == null) || (res == 0)) {
             0
         } else res
@@ -281,7 +283,7 @@ class DocumentActivity : AppCompatActivity() {
 
     // сколько всего частей в остатках
     private fun checkPartNomen(scan: String): Int{
-        val res = mAllViewModel.countPart(scan.padEnd(31))
+        val res = mAllViewModel.countPart(scan)
         return if ((res == null) || (res == 0)) {
             0
         } else res
@@ -290,7 +292,7 @@ class DocumentActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun queryPart() {
         val li = LayoutInflater.from(this)
-        val partsView: View = li.inflate(R.layout.query_part, null)
+        val partsView: View = li.inflate(R.layout.query_only_part, null)
         val mDialogBuilder = AlertDialog.Builder(this)
         mDialogBuilder.setView(partsView)
         val userInput = partsView.findViewById<View>(R.id.input_part) as EditText

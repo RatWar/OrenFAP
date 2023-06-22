@@ -67,6 +67,7 @@ class LoadActivity : AppCompatActivity() {
 
     private fun onLoad() {
         val t = Thread {
+            var stage = 0
             val path =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val ftpClient = FTPClient()
@@ -92,6 +93,7 @@ class LoadActivity : AppCompatActivity() {
                     h.sendMessage(msg)
                     return@Thread
                 }
+                stage += 1  // обмен разрешен
                 msg = h.obtainMessage(
                     0,
                     "Идет обмен..."
@@ -114,6 +116,7 @@ class LoadActivity : AppCompatActivity() {
                     "Получаю файлы остатков"
                 )
                 h.sendMessage(msg)
+                stage += 1  // подготовка к приему остатков
                 countLoad = 0
                 for (i in 0 until ftpFiles.size) {
                     if (ftpFiles[i].substring(ftpFiles[i].length - 3) != "DBF") {
@@ -131,6 +134,7 @@ class LoadActivity : AppCompatActivity() {
                     }
                     fos.close()
                 }
+                stage += 1  // остатки получены
                 msg = if (countLoad > 0) {
                     h.obtainMessage(
                         1,
@@ -146,6 +150,7 @@ class LoadActivity : AppCompatActivity() {
 // выгружаю расход в файлы
                 mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
                 onSaveCodesToJSON()
+                stage += 1  // расход выгружен в файлы
 // передаю файлы
                 val filesArray: Array<File> = path.listFiles { _, filename ->
                     filename.lowercase(Locale.getDefault()).endsWith(".json")
@@ -160,6 +165,7 @@ class LoadActivity : AppCompatActivity() {
                         fileIn.delete()
                     }
                 }
+                stage += 1  // файлы выгружены
                 msg = if (countUpload > 0) {
                     h.obtainMessage(
                         2,
@@ -175,7 +181,7 @@ class LoadActivity : AppCompatActivity() {
             } catch (ex: IOException) {
                 msg = h.obtainMessage(
                     1,
-                    "Ошибка при обмене"
+                    "Ошибка при обмене + $stage"
                 )
                 h.sendMessage(msg)
                 ex.printStackTrace()
@@ -214,6 +220,7 @@ class LoadActivity : AppCompatActivity() {
                     reader = DBFReader(fis)
                     reader.charactersetName = "866"
                     val counts = reader.recordCount
+                    var sgtin: String
                     var rowValues: Array<Any?>
                     val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
                     for (i in 1..counts) {
@@ -222,10 +229,7 @@ class LoadActivity : AppCompatActivity() {
                             1
                         } else
                             (rowValues[3] as Double).toInt()
-                        val sgtin: String = if (rowValues[0].toString().length > 31) {
-                            rowValues[0].toString().take(31)
-                        } else
-                            rowValues[0].toString().take(13)
+                        sgtin = rowValues[0].toString().trim()
                         mCurrentNomen = NomenData(
                             df.format(Date()),
                             fileIn.toString(),
