@@ -153,11 +153,13 @@ class DocumentInventActivity : AppCompatActivity() {
     private fun onScannerResult(codes: Array<String>?) {
         if (codes == null) return
         mSGTIN = codes[1]
-        if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
-            mSGTIN = mSGTIN.substring(1)
+        if (codes[0] == "DATA_MATRIX") {
+            if (mSGTIN[0] == '\u001D' || mSGTIN[0] == '\u00E8') {  // для QR-кода убираю 1-й служебный
+                mSGTIN = mSGTIN.substring(1)
+            }
+              mSGTIN = mSGTIN.filterNot { it == '\u001D'}
         }
         val barcode = mSGTIN
-        mSGTIN = mSGTIN.take(31)
         fullScan = 0
         partScan = 0
         if (isKnownNomen(mSGTIN)) {              // есть в остатках
@@ -192,7 +194,7 @@ class DocumentInventActivity : AppCompatActivity() {
     }
 
     private fun handlerBarcode() {
-        val mCurrentNom = mAllViewModel.getRemainsByCode(mSGTIN.padEnd(31))
+        val mCurrentNom = mAllViewModel.getRemainsByCode(mSGTIN)
         val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
         while(fullScan > 0){
             tableScan.add(mSGTIN)
@@ -233,7 +235,7 @@ class DocumentInventActivity : AppCompatActivity() {
 
     // проверка скана в остатках
     private fun checkInNomen(scan: String): Int{
-        val res = mAllViewModel.countAvailableRemains(scan.padEnd(31))
+        val res = mAllViewModel.countAvailableRemains(scan)
         return if ((res == null) || (res == 0)) {
             0
         } else res
@@ -241,14 +243,14 @@ class DocumentInventActivity : AppCompatActivity() {
 
     // сколько всего частей в остатках
     private fun checkPartNomen(scan: String): Int{
-        val res = mAllViewModel.countPartRemains(scan.padEnd(31))
+        val res = mAllViewModel.countPartRemains(scan)
         return if ((res == null) || (res == 0)) {
             0
         } else res
     }
 
     private fun isKnownNomen(scan: String): Boolean{
-        val res = mAllViewModel.getRemainsByCode(scan.padEnd(31))
+        val res = mAllViewModel.getRemainsByCode(scan)
         return res != null
     }
 

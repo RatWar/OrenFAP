@@ -1,6 +1,7 @@
 package com.besaba.anvarov.orentsd.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -8,7 +9,6 @@ import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -43,7 +43,7 @@ class ListFAPActivity : AppCompatActivity() {
     private lateinit var mCurrentRemains: RemainsData
     private var strFAP = ""
     private var nameFAP = ""
-    private val tag = "myLogs"
+//    private val tag = "myLogs"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,23 +67,20 @@ class ListFAPActivity : AppCompatActivity() {
                         btnFTPLoad.isClickable = true
                         nameFAP = msg.obj.toString()
                     }
-
                     1 -> {  // в случае ошибки
                         tvNameFAP.text = msg.obj.toString()
                         btnFTPLoad.isEnabled = false
                         btnFTPLoad.isClickable = false
                     }
-
                     2 -> {  // надпись
                         tvStatusFAP.text = msg.obj.toString()
                     }
-
                     3 -> {  // в случае ошибки
                         tvStatusFAP.text = msg.obj.toString()
                     }
                     4 -> {
                         val intentAnswer = Intent()
-                        Log.d(tag, nameFAP)
+//                        Log.d(tag, nameFAP)
                         intentAnswer.putExtra("nameFAP", nameFAP)
                         setResult(Activity.RESULT_OK, intentAnswer)
                         finish()
@@ -226,7 +223,7 @@ class ListFAPActivity : AppCompatActivity() {
             val path =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val ftpClient = FTPClient()
-            val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            var prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
             val user = "faps"
             val pass = "Tw789QwZ"
@@ -306,17 +303,13 @@ class ListFAPActivity : AppCompatActivity() {
                     var rowValues: Array<Any?>
                     var ean13: Boolean
                     var sgtin: String
+                    var sumTotal = 0.00
                     val df = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale("ru", "RU"))
                     for (i in 1..counts) {
 //                        Log.d(tag, "Номер строки = $i")
                         reader.nextRecord().also { rowValues = it }
-                        if (rowValues[0].toString().length > 31) {
-                            sgtin = rowValues[0].toString().take(31)
-                            ean13 = false
-                        } else {
-                            sgtin = rowValues[0].toString().take(13)
-                            ean13 = true
-                        }
+                        sgtin = rowValues[0].toString().trim()
+                        ean13 = sgtin.length <= 13
                         val available = if (ean13) {
                             if ((rowValues[3] as Double).toInt() == 0) {
                                 (rowValues[4] as Double).toInt() // ean13 код один - для множества упаковок
@@ -330,6 +323,7 @@ class ListFAPActivity : AppCompatActivity() {
                                 ((rowValues[3] as Double) * (rowValues[4] as Double)).roundToInt()
                             }
                         }
+                        sumTotal += (rowValues[2] as Double) * (rowValues[4] as Double)
                         mCurrentRemains = RemainsData(
                             df.format(Date()),
                             file.name.toString(),
@@ -342,6 +336,9 @@ class ListFAPActivity : AppCompatActivity() {
                         )
                         mAllViewModel.insertRemainsBlocking(mCurrentRemains)
                     }
+                    prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+                    val editor = prefs.edit()
+                    editor.putFloat("sumTotal", sumTotal.toFloat()).apply()
                 }
                 file.delete()
                 msg = h.obtainMessage(

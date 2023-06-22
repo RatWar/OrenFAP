@@ -1,17 +1,24 @@
 package com.besaba.anvarov.orentsd.activity
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.R
+import kotlin.math.roundToInt
 
 class ReportActivity : AppCompatActivity() {
 
     private lateinit var mAllViewModel: AllViewModel
     private var countUnknown: Int = 0
+    private lateinit var prefs: SharedPreferences
+    private var sumRemains: Double = 0.0
+//    private val tag = "myLogs"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,10 +31,14 @@ class ReportActivity : AppCompatActivity() {
         val txtUnknownText = findViewById<TextView>(R.id.textView41)
         val txtUnknown = findViewById<TextView>(R.id.textView42)
         mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
-        val sumRemains = mAllViewModel.sumRemains()
-        txtSumRemains.text = sumRemains.toString()
-        val sumInvent = 0.00
-//        val sumInvent = sumInvent()
+        prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        if (prefs.contains("sumTotal")) {
+            sumRemains = (prefs.getFloat("sumTotal", 0F).toDouble() * 100.0).roundToInt() / 100.0
+            txtSumRemains.text = sumRemains.toString()
+        } else {
+            txtSumRemains.text = "нет остатков"
+        }
+        val sumInvent = (sumInvent() * 100.0).roundToInt() / 100.0
         txtSumInvent.text = sumInvent.toString()
         txtDiff.text = (sumRemains - sumInvent).toString()
         if (countUnknown > 0) {
@@ -48,16 +59,25 @@ class ReportActivity : AppCompatActivity() {
                     countUnknown += 1
                     continue
                 }
-                if (it.part == 0) {
-                    sum += it.price
+                val buf_part = it.part
+//                Log.d(tag, "buf_part - $buf_part")
+                if (buf_part == 0) {
+                    val buf_price = it.price
+//                    Log.d(tag, "buf_price - $buf_price")
+                    sum += buf_price
+//                    Log.d(tag, "sum - $sum")
                 } else {
                     remPart = mAllViewModel.countPartRemains(it.sgtin)!!
+//                    Log.d(tag, "remPart - $remPart")
                     when (remPart) {
                         0 -> {
                             remPart = 1
                         }
                     }
-                    sum += (it.part / remPart) * it.price
+                    val buf = (it.part * 1.0 / remPart) * it.price
+//                    Log.d(tag, "buf - $buf")
+                    sum += buf
+//                    Log.d(tag, "sum - $sum")
                 }
             }
         }

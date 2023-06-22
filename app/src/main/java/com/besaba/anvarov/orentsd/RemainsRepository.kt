@@ -46,8 +46,4 @@ class RemainsRepository(private val remainsDataDao: RemainsDataDao) {
         return remainsDataDao.delRemains()
     }
 
-    @WorkerThread
-    suspend fun sumRemains(): Double {
-        return remainsDataDao.sumRemains()
-    }
 }

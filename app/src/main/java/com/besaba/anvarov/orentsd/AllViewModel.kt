@@ -227,11 +227,5 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         runBlocking { mRemainsRepository.delRemains() }
     }
 
-    fun sumRemains(): Double {
-        var res: Double
-        runBlocking { res = mRemainsRepository.sumRemains() }
-        return res
-    }
-
 }
 

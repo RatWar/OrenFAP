@@ -48,7 +48,7 @@
 	<string name="txtReport11">Сумма по остатку</string>
 	<string name="txtReport_0">0</string>
 	<string name="btReport1">Закрыть</string>
-	<string name="txtReport21">Сумма по отсканированному</string>
+	<string name="txtReport21">Сумма по отскан.</string>
 	<string name="txtReport31">Разница в сумме</string>
 	<string name="txtReport41">Кол-во неопределенного</string>
 	<string name="fullNumber">Количество целых</string>

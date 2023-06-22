@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.besaba.anvarov.orentsd.FAPActivityContract
@@ -17,7 +16,7 @@ class InventActivity : AppCompatActivity() {
     private val getNameFAP = registerForActivityResult(FAPActivityContract()) { result ->
         onFAPResult(result)
     }
-    private val tag = "myLogs"
+//    private val tag = "myLogs"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +36,7 @@ class InventActivity : AppCompatActivity() {
         } else {
             tvName.text = ""
         }
-        Log.d(tag, "onCreate (восстанавливаю) - " + tvName.text.toString())
+//        Log.d(tag, "onCreate (восстанавливаю) - " + tvName.text.toString())
         setStateButton(tvName.text.toString())
     }
 
@@ -46,7 +45,7 @@ class InventActivity : AppCompatActivity() {
         val editor = prefs.edit()
         val nameFAP = tvName.text.toString()
         editor.putString("nameFAP", nameFAP).apply()
-        Log.d(tag, "onPause (сохраняю) - $nameFAP")
+//        Log.d(tag, "onPause (сохраняю) - $nameFAP")
         super.onPause()
     }
 
@@ -58,7 +57,7 @@ class InventActivity : AppCompatActivity() {
         } else {
             tvName.text = ""
         }
-        Log.d(tag, "onResume (восстанавливаю) - " + tvName.text.toString())
+//        Log.d(tag, "onResume (восстанавливаю) - " + tvName.text.toString())
         setStateButton(tvName.text.toString())
     }
 
@@ -67,11 +66,11 @@ class InventActivity : AppCompatActivity() {
     }
 
     private fun onFAPResult(nameFAP: String) {
-        Log.d(tag, "onFAPResult - $nameFAP")
+//        Log.d(tag, "onFAPResult - $nameFAP")
         if (nameFAP != "Back") {
             val tvName = findViewById<TextView>(R.id.tvName)
             tvName.text = nameFAP
-            Log.d(tag, "onFAPResult - " + tvName.text.toString())
+//            Log.d(tag, "onFAPResult - " + tvName.text.toString())
             setStateButton(tvName.text.toString())
             val editor = prefs.edit()
             editor.putString("nameFAP", nameFAP).apply()
