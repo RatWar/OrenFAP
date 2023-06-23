@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -104,8 +103,6 @@ class ListFAPActivity : AppCompatActivity() {
 
     private fun onLoad(numFAP: String) {
         val t = Thread {
-            val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
@@ -113,7 +110,7 @@ class ListFAPActivity : AppCompatActivity() {
             val pass = "Tw789QwZ"
             val nameDBF = "faps.DBF"
             var msg: Message?
-            val file = File(path, nameDBF)
+            val file = File(filesDir, numFAP)
             if (file.exists()) {
                 file.delete()
             }
@@ -220,15 +217,13 @@ class ListFAPActivity : AppCompatActivity() {
 
     private fun onLoadRemains(numFAP: String) {
         val t = Thread {
-            val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             var prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
             val user = "faps"
             val pass = "Tw789QwZ"
             var msg: Message?
-            val file = File(path, numFAP)
+            val file = File(filesDir, numFAP)
             if (file.exists()) {
                 file.delete()
             }
@@ -368,4 +363,5 @@ class ListFAPActivity : AppCompatActivity() {
         }
         t.start()
     }
+
 }

@@ -2,7 +2,6 @@ package com.besaba.anvarov.orentsd.activity
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -15,7 +14,6 @@ import androidx.preference.PreferenceManager
 import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.R
 import com.besaba.anvarov.orentsd.extensions.addScan
-import com.besaba.anvarov.orentsd.extensions.writeJson
 import com.besaba.anvarov.orentsd.room.NomenData
 import com.linuxense.javadbf.DBFException
 import com.linuxense.javadbf.DBFReader
@@ -68,8 +66,6 @@ class LoadActivity : AppCompatActivity() {
     private fun onLoad() {
         val t = Thread {
             var stage = 0
-            val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
@@ -122,7 +118,7 @@ class LoadActivity : AppCompatActivity() {
                     if (ftpFiles[i].substring(ftpFiles[i].length - 3) != "DBF") {
                         continue
                     }
-                    val file = File(path, ftpFiles[i])
+                    val file = File(filesDir, ftpFiles[i])
                     if (!file.exists()) {
                         file.createNewFile()
                     }
@@ -152,7 +148,7 @@ class LoadActivity : AppCompatActivity() {
                 onSaveCodesToJSON()
                 stage += 1  // расход выгружен в файлы
 // передаю файлы
-                val filesArray: Array<File> = path.listFiles { _, filename ->
+                val filesArray: Array<File> = filesDir.listFiles { _, filename ->
                     filename.lowercase(Locale.getDefault()).endsWith(".json")
                 } as Array<File>
                 countUpload = 0
@@ -202,7 +198,7 @@ class LoadActivity : AppCompatActivity() {
                 return@Thread
             }
 // загружаю приход в остатки
-            val filesArray: Array<File> = path.listFiles { _, filename ->
+            val filesArray: Array<File> = filesDir.listFiles { _, filename ->
                 filename.lowercase(Locale.getDefault()).endsWith(".dbf")
             } as Array<File>
             if (filesArray.isNotEmpty()) {
@@ -315,6 +311,33 @@ class LoadActivity : AppCompatActivity() {
             writeJson(scans.toString(), numberDoc, dateDoc, scans.size)
             mAllViewModel.deleteDoc(numberDoc)
         }
+    }
+
+    private fun writeJson(jsonString: String, numDoc: Int, dateDoc: String, countDoc: Int): Boolean {
+        return try {
+            val fileName = createNameFile(numDoc, dateDoc, countDoc)
+            val fileWrite = File(filesDir, fileName)
+            val outputStream: OutputStream = fileWrite.outputStream()
+            val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream, "UTF-8"))
+            bufferedWriter.write(jsonString)
+            bufferedWriter.flush()
+            bufferedWriter.close()
+            outputStream.close()
+            true
+        } catch (e: IOException) {
+            false
+        }
+    }
+
+    private fun createNameFile(numDoc: Int, dateDoc: String, countDoc: Int): String {
+        val t = dateDoc.substring(0, 10).replace(
+            ".",
+            ""
+        )
+        val t1 = t.substring(0, 2)
+        val t2 = t.substring(2, 4)
+        val t3 = t.substring(4, 8)
+        return numDoc.toString() + "_" + t3 + t2 + t1 + "_00_" + countDoc.toString() + ".json"
     }
 
 }
