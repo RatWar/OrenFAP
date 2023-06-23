@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -17,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.R
+import com.besaba.anvarov.orentsd.extensions.isExternalStorageWritable
 import com.besaba.anvarov.orentsd.room.RemainsData
 import com.linuxense.javadbf.DBFException
 import com.linuxense.javadbf.DBFReader
@@ -25,12 +25,14 @@ import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPReply
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -104,8 +106,6 @@ class ListFAPActivity : AppCompatActivity() {
 
     private fun onLoad(numFAP: String) {
         val t = Thread {
-            val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
@@ -113,7 +113,7 @@ class ListFAPActivity : AppCompatActivity() {
             val pass = "Tw789QwZ"
             val nameDBF = "faps.DBF"
             var msg: Message?
-            val file = File(path, nameDBF)
+            val file = File(filesDir, numFAP)
             if (file.exists()) {
                 file.delete()
             }
@@ -220,15 +220,13 @@ class ListFAPActivity : AppCompatActivity() {
 
     private fun onLoadRemains(numFAP: String) {
         val t = Thread {
-            val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             var prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
             val user = "faps"
             val pass = "Tw789QwZ"
             var msg: Message?
-            val file = File(path, numFAP)
+            val file = File(filesDir, numFAP)
             if (file.exists()) {
                 file.delete()
             }
@@ -368,4 +366,5 @@ class ListFAPActivity : AppCompatActivity() {
         }
         t.start()
     }
+
 }

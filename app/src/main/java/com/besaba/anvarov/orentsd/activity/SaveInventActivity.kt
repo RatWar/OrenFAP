@@ -15,16 +15,18 @@ import androidx.preference.PreferenceManager
 import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.R
 import com.besaba.anvarov.orentsd.extensions.addScanInvent
-import com.besaba.anvarov.orentsd.extensions.writeJsonInvent
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPReply
 import org.json.JSONObject
 import java.io.BufferedInputStream
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStream
+import java.io.OutputStream
+import java.io.OutputStreamWriter
 import java.util.Locale
 
 class SaveInventActivity : AppCompatActivity() {
@@ -163,6 +165,26 @@ class SaveInventActivity : AppCompatActivity() {
             writeJsonInvent(scans.toString(), nameFileRemains)
             mAllViewModel.deleteDocInvent(1)
         }
+    }
+
+    private fun writeJsonInvent(jsonString: String, numMD: String): Boolean {
+        return try {
+            val fileName = createNameFileInvent(numMD)
+            val fileWrite = File(filesDir, fileName)
+            val outputStream: OutputStream = fileWrite.outputStream()
+            val bufferedWriter = BufferedWriter(OutputStreamWriter(outputStream, "UTF-8"))
+            bufferedWriter.write(jsonString)
+            bufferedWriter.flush()
+            bufferedWriter.close()
+            outputStream.close()
+            true
+        } catch (e: IOException) {
+            false
+        }
+    }
+
+    private fun createNameFileInvent(numDoc: String): String {
+        return "$numDoc.json"
     }
 
 }
