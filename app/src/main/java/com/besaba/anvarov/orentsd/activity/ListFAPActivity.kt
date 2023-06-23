@@ -105,7 +105,7 @@ class ListFAPActivity : AppCompatActivity() {
     private fun onLoad(numFAP: String) {
         val t = Thread {
             val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
@@ -221,7 +221,7 @@ class ListFAPActivity : AppCompatActivity() {
     private fun onLoadRemains(numFAP: String) {
         val t = Thread {
             val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             var prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()

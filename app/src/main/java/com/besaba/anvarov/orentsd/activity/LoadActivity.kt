@@ -69,7 +69,7 @@ class LoadActivity : AppCompatActivity() {
         val t = Thread {
             var stage = 0
             val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()

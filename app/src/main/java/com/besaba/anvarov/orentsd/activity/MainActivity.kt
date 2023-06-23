@@ -1,13 +1,16 @@
 package com.besaba.anvarov.orentsd.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private var fCamera: String? = ""
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -69,18 +74,24 @@ class MainActivity : AppCompatActivity() {
             docs?.let { docListAdapter.setDocs(it) }
         }
 
-        KotlinPermissions.with(this) // where this is an FragmentActivity instance
-            .permissions(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .onAccepted {
-                //List of accepted permissions
-            }
-            .onDenied {
-                //List of denied permissions
-            }
-            .onForeverDenied {
-                //List of forever denied permissions
-            }
-            .ask()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            KotlinPermissions.with(this) // where this is an FragmentActivity instance
+                .permissions(Manifest.permission.CAMERA,
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_MEDIA_IMAGES,
+                                Manifest.permission.ACCESS_MEDIA_LOCATION)
+                .onAccepted {
+                    //List of accepted permissions
+                }
+                .onDenied {
+                    //List of denied permissions
+                }
+                .onForeverDenied {
+                    //List of forever denied permissions
+                }
+                .ask()
+        }
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener { onDocument() }
