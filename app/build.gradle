@@ -13,8 +13,8 @@ android {
         applicationId "com.besaba.anvarov.orentsd"
         minSdk 24
         targetSdk 33
-        versionCode 4
-        versionName "2.3"
+        versionCode 8
+        versionName "2.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -53,10 +53,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
 // Room components
-    implementation "androidx.room:room-runtime:2.5.1"
-    implementation "androidx.room:room-ktx:2.5.1"
-    kapt "androidx.room:room-compiler:2.5.1"
-    androidTestImplementation "androidx.room:room-testing:2.5.1"
+    implementation "androidx.room:room-runtime:2.5.2"
+    implementation "androidx.room:room-ktx:2.5.2"
+    kapt "androidx.room:room-compiler:2.5.2"
+    androidTestImplementation "androidx.room:room-testing:2.5.2"
 
 // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
