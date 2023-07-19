@@ -52,9 +52,9 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mScanRepository.deleteSGTIN(numDoc, sgtin)
     }
 
-    fun deleteCodes(sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
-        mScanRepository.deleteCodes(sgtin)
-    }
+//    fun deleteCodes(sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
+//        mScanRepository.deleteCodes(sgtin)
+//    }
 
     fun deleteDoc(numDoc: Int) = viewModelScope.launch(Dispatchers.IO) {
         mScanRepository.deleteDoc(numDoc)
@@ -90,9 +90,9 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // mNomenRepository
-    fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {
-        mNomenRepository.insert(nomenData)
-    }
+//    fun insertNomen(nomenData: NomenData) = viewModelScope.launch(Dispatchers.IO) {
+//        mNomenRepository.insert(nomenData)
+//    }
 
     fun insertNomenBlocking(nomenData: NomenData) {
         runBlocking { mNomenRepository.insert(nomenData) }
@@ -139,28 +139,28 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         mInventRepository.deleteBarcodeId(id)
     }
 
-    fun deleteSGTINInvent(numDoc: Int, sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
-        mInventRepository.deleteSGTIN(numDoc, sgtin)
-    }
+//    fun deleteSGTINInvent(numDoc: Int, sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
+//        mInventRepository.deleteSGTIN(numDoc, sgtin)
+//    }
 
-    fun deleteCodesInvent(sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
-        mInventRepository.deleteCodes(sgtin)
-    }
+//    fun deleteCodesInvent(sgtin: String) = viewModelScope.launch(Dispatchers.IO) {
+//        mInventRepository.deleteCodes(sgtin)
+//    }
 
     fun deleteDocInvent(numDoc: Int) = viewModelScope.launch(Dispatchers.IO) {
         mInventRepository.deleteDoc(numDoc)
     }
 
-    fun getNumberDocumentInvent(): Int {
-        var res: Int
-        runBlocking { res = mInventRepository.getNumberDocument() }
-        return res
-    }
+//    fun getNumberDocumentInvent(): Int {
+//        var res: Int
+//        runBlocking { res = mInventRepository.getNumberDocument() }
+//        return res
+//    }
 
-    fun setNumDocAndBarcodeInvent(numDoc: Int, barcode: String){
-        mInventRepository.mNumDoc = numDoc
-        mAllCodesInvent = mInventRepository.getCodes(numDoc, barcode)
-    }
+//    fun setNumDocAndBarcodeInvent(numDoc: Int, barcode: String){
+//        mInventRepository.mNumDoc = numDoc
+//        mAllCodesInvent = mInventRepository.getCodes(numDoc, barcode)
+//    }
 
     fun setNumDocInvent(numDoc: Int){
         mInventRepository.mNumDoc = numDoc
@@ -181,9 +181,9 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // mRemainsRepository
-    fun insertRemains(remainsData: RemainsData) = viewModelScope.launch(Dispatchers.IO) {
-        mRemainsRepository.insert(remainsData)
-    }
+//    fun insertRemains(remainsData: RemainsData) = viewModelScope.launch(Dispatchers.IO) {
+//        mRemainsRepository.insert(remainsData)
+//    }
 
     fun insertRemainsBlocking(remainsData: RemainsData) {
         runBlocking { mRemainsRepository.insert(remainsData) }
@@ -195,11 +195,11 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
-    fun countRemains(): Int {
-        var res: Int
-        runBlocking { res = mRemainsRepository.countRemains() }
-        return res
-    }
+//    fun countRemains(): Int {
+//        var res: Int
+//        runBlocking { res = mRemainsRepository.countRemains() }
+//        return res
+//    }
 
     fun countAvailableRemains(barcode: String): Int? {
         var res: Int?
@@ -219,9 +219,9 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
         return res
     }
 
-    fun updateAvailableRemains(id: Long, available: Int) = viewModelScope.launch(Dispatchers.IO) {
-        mRemainsRepository.updateAvailable(id, available)
-    }
+//    fun updateAvailableRemains(id: Long, available: Int) = viewModelScope.launch(Dispatchers.IO) {
+//        mRemainsRepository.updateAvailable(id, available)
+//    }
 
     fun delRemains() {
         runBlocking { mRemainsRepository.delRemains() }

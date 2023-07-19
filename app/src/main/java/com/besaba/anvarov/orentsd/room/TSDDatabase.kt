@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [ScanData::class, NomenData::class, InventData::class, RemainsData::class], exportSchema = false, version = 2)
+@Database(entities = [ScanData::class, NomenData::class, InventData::class, RemainsData::class], exportSchema = false, version = 3)
 abstract class TSDDatabase : RoomDatabase() {
 
     abstract fun scanDataDao(): ScanDataDao
