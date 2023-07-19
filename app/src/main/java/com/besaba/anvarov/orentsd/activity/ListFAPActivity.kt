@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.besaba.anvarov.orentsd.AllViewModel
 import com.besaba.anvarov.orentsd.R
-import com.besaba.anvarov.orentsd.extensions.isExternalStorageWritable
 import com.besaba.anvarov.orentsd.room.RemainsData
 import com.linuxense.javadbf.DBFException
 import com.linuxense.javadbf.DBFReader
@@ -25,14 +24,12 @@ import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPReply
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

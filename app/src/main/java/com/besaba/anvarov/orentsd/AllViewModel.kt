@@ -18,9 +18,9 @@ class AllViewModel(application: Application) : AndroidViewModel(application) {
     var mAllCodes: LiveData<List<CodesData>>
     var mAllScans: LiveData<List<CountData>>
     val mAllDocs: LiveData<List<DocumentData>>
-    var mAllCodesInvent: LiveData<List<CodesData>>
+    private var mAllCodesInvent: LiveData<List<CodesData>>
     var mAllScansInvent: LiveData<List<CountData>>
-    val mAllDocsInvent: LiveData<List<DocumentData>>
+    private val mAllDocsInvent: LiveData<List<DocumentData>>
 
     init {
         val scansDao = TSDDatabase.getDatabase(application).scanDataDao()

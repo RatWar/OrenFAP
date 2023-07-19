@@ -137,7 +137,7 @@ class DocumentInventActivity : AppCompatActivity() {
         } else {
             if (partAvailable > 1) {
                 partTotal = checkPartNomen(mSGTIN)
-                queryPart(true, true)
+                queryPart(isFull = true, isPart = true)
             } else {
                 partScan = 1
                 handlerBarcode()
@@ -169,7 +169,7 @@ class DocumentInventActivity : AppCompatActivity() {
                 queryPart(true, (countPart > 0))  // целые нужны, части определить
             } else {
                 if (countPart > 0) {             // QR может делиться
-                    queryPart(false, true)  // целые не нужны, только части
+                    queryPart(isFull = false, isPart = true)  // целые не нужны, только части
                 } else {                         // QR кол-во = 1
                     partScan = 1
                     handlerBarcode()

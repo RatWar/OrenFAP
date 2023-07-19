@@ -58,12 +58,12 @@ class ReportActivity : AppCompatActivity() {
                     countUnknown += 1
                     continue
                 }
-                val buf_part = it.part
+                val bufPart = it.part
 //                Log.d(tag, "buf_part - $buf_part")
-                if (buf_part == 0) {
-                    val buf_price = it.price
+                if (bufPart == 0) {
+                    val bufPrice = it.price
 //                    Log.d(tag, "buf_price - $buf_price")
-                    sum += buf_price
+                    sum += bufPrice
 //                    Log.d(tag, "sum - $sum")
                 } else {
                     remPart = mAllViewModel.countPartRemains(it.sgtin)!!
