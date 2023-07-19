@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         resConfigs("en", "ru")
         applicationId "com.besaba.anvarov.orentsd"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 8
         versionName "2.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -55,7 +55,7 @@ dependencies {
 // Room components
     implementation "androidx.room:room-runtime:2.5.2"
     implementation "androidx.room:room-ktx:2.5.2"
-    kapt "androidx.room:room-compiler:2.5.2"
+    annotationProcessor "androidx.room:room-compiler:2.5.2"
     androidTestImplementation "androidx.room:room-testing:2.5.2"
 
 // Lifecycle components
@@ -67,7 +67,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
 
 // Coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
 //    https://github.com/yuriy-budiyev/code-scanner
