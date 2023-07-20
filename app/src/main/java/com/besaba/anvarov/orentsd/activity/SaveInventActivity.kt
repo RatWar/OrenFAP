@@ -1,15 +1,14 @@
 package com.besaba.anvarov.orentsd.activity
 
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.besaba.anvarov.orentsd.AllViewModel
@@ -17,6 +16,7 @@ import com.besaba.anvarov.orentsd.R
 import com.besaba.anvarov.orentsd.extensions.addScanInvent
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
+import org.apache.commons.net.ftp.FTPFile
 import org.apache.commons.net.ftp.FTPReply
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -27,7 +27,9 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.OutputStreamWriter
+import java.util.Arrays
 import java.util.Locale
+import java.util.stream.Collectors
 
 class SaveInventActivity : AppCompatActivity() {
 
@@ -48,12 +50,15 @@ class SaveInventActivity : AppCompatActivity() {
                     0 -> {  // кнопка - надпись
                         btLoad.text = msg.obj.toString()
                     }
+
                     1 -> {  // сколько загружено
                         tvInfoLoad.text = msg.obj.toString()
                     }
+
                     2 -> {  // сколько выгружено
                         tvInfoUpload.text = msg.obj.toString()
                     }
+
                     3 -> {  // кнопка - надпись + отключение
                         btLoad.text = msg.obj.toString()
                         btLoad.isEnabled = false
@@ -65,15 +70,13 @@ class SaveInventActivity : AppCompatActivity() {
 
     private fun onLoad() {
         val t = Thread {
-            val path =
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val ftpClient = FTPClient()
             val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
             val server = prefs.getString("et_preference_server", "").toString()
             val user = "faps"
             val pass = "Tw789QwZ"
             var msg: Message?
-            var countUpload: Int
+            var countUpload = 0
             try {
                 ftpClient.connect(server, FTP.DEFAULT_PORT)
                 ftpClient.login(user, pass)
@@ -94,19 +97,32 @@ class SaveInventActivity : AppCompatActivity() {
                 h.sendMessage(msg)
                 ftpClient.enterLocalPassiveMode()
 // выгружаю инвентаризацию в файл
-                onSaveCodesToJSON()
+                val resultSave = onSaveCodesToJSON()
+                if (resultSave) {
 // передаю файлы
-                val filesArray: Array<File> = path.listFiles { _, filename ->
-                    filename.lowercase(Locale.getDefault()).endsWith(".json")
-                } as Array<File>
-                countUpload = 0
-                for (fileIn in filesArray) {
-                    val fi = fileIn.name
-                    val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
-                    val res = ftpClient.storeFile(fi, fis)
-                    if (res) {
-                        countUpload += 1
-                        fileIn.delete()
+                    val filesArray: Array<File> = filesDir.listFiles { _, filename ->
+                        filename.lowercase(Locale.getDefault()).endsWith(".json")
+                    } as Array<File>
+                    for (fileIn in filesArray) {
+                        val fi = fileIn.name
+                        val fis: InputStream = BufferedInputStream(FileInputStream(fileIn))
+                        val res = ftpClient.storeFile(fi, fis)
+                        if (res) {
+                            // получаю список файлов
+                            val ftpFiles = Arrays.stream(ftpClient.listFiles(
+                                ""
+                            ) { file ->
+                                file.isFile
+                            })
+                                .map { obj: FTPFile -> obj.name }
+                                .collect(Collectors.toList())
+                            val resultSearch = ftpFiles.indexOf(fi)
+                            if (resultSearch != -1) {
+                                countUpload += 1
+                                mAllViewModel.deleteDocInvent(1)
+                                fileIn.delete()
+                            }
+                        }
                     }
                 }
                 msg = if (countUpload > 0) {
@@ -153,7 +169,7 @@ class SaveInventActivity : AppCompatActivity() {
         t.start()
     }
 
-    private fun onSaveCodesToJSON() {
+    private fun onSaveCodesToJSON(): Boolean {
         val scans = mutableListOf<JSONObject>()
         mAllViewModel = ViewModelProvider(this)[AllViewModel::class.java]
         val nameFileRemains = mAllViewModel.nameFileRemains().drop(4).dropLast(4)
@@ -162,9 +178,12 @@ class SaveInventActivity : AppCompatActivity() {
             for (it in all) {
                 scans.add(addScanInvent(it))
             }
-            writeJsonInvent(scans.toString(), nameFileRemains)
-            mAllViewModel.deleteDocInvent(1)
+            if (writeJsonInvent(scans.toString(), nameFileRemains)) {
+//                mAllViewModel.deleteDocInvent(1)
+                return true
+            }
         }
+        return false
     }
 
     private fun writeJsonInvent(jsonString: String, numMD: String): Boolean {
